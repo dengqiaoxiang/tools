@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>closure</title>
+	</head>
+	<body>
+		<a href="https://www.ruanyifeng.com/blog/2009/08/learning_javascript_closures.html" target="_blank">参考</a>
+		<h3>闭包：能够读取其他函数内部变量的函数，本质：将函数内与函数外连接在一起的桥梁</h3>
+		
+		<h4>用途</h4>
+		<ul>
+			<li>1、获取外部函数的内部变量</li>
+			<li>2、让变量持久保持在内存中，除非主动释放</li>
+		</ul>
+		
+		
+		<h4>优点</h4>
+		<ul>
+			<li>1、变量私有化，避免全局污染</li>
+			<li>2、缓存中间值,减少多次判断</li>
+		</ul>
+		<h4>缺点</h4>
+		<ul>
+			<li>1、占据内存，可能造成溢栈，需手动GC</li>
+			<li>2、影响性能或速度</li>
+		</ul>
+		
+		<h4>使用场景</h4>
+		<ul>
+			<li>1、模块封装</li>
+			<li>2、防止获取意外值 （for循环中的i等）(点击事件,setTimeout)</li>
+		</ul>
+		
+		<button>测试1</button>
+		<button>测试2</button>
+		<button>测试3</button>
+		
+		<script type="text/javascript">
+			
+			// 模块封装
+			var Yideng = (function () {
+			    // 这样声明为模块私有变量，外界无法直接访问
+			    var foo = 0;
+			
+			    function Yideng() {}
+			    Yideng.prototype.bar = function bar() {
+			        return foo;
+			    };
+			    return Yideng;
+			}());
+			
+			// 防止获取意外
+			for(var i=0; i < 5; i++ ){
+				setTimeout(function(){
+					console.log(i)
+				},0)
+			}
+			
+			// let/const形成作用域块
+			for(let i=0; i < 5; i++ ){ 
+				setTimeout(function(){
+					console.log(i)
+				},0)
+			}
+			
+			
+			// 形成闭包
+			for(var i=0; i < 5; i++ ){
+				// 这么执行setTImeout的time 推荐
+				(function(i){
+					setTimeout(function(){
+						console.log(i +'t')
+					},0)
+				})(i)
+				
+				// 马上输出, 不执行setTImeout的time, 这么已经破坏setTimeout原本结构，不推荐
+				// setTimeout((function(i){
+				// 	console.log(i +'t')
+				// })(i),1000)
+				console.log(i)
+			}
+			
+			var btns = document.getElementsByTagName('button')
+			// es5 采用闭包 es6 使用let/const 形成作用域
+			for (var i = 0; i < btns.length; i++) {
+				// btns[i].onclick = (function (j) {
+				// 	return function(){
+				// 		console.log('第' + (j + 1) + '个')
+				// 	}
+				// })(i)
+				(function(arg){
+					btns[i].onclick = function () {	
+						console.log('第' + (arg + 1) + '个')
+					}
+				})(i)
+			}
+			
+			var a = 10
+			function fn() {
+			  var b = 20
+			  function bar() {
+			    console.log(a + b) //30
+			  }
+			  return bar
+			}
+			var x = fn(),
+			  b = 200
+			x() //bar()
+		</script>
+	</body>
+</html>

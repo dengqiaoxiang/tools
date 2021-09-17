@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<div>
+			<h3>test debounce</h3>
+			<input type="text" placeholder="test debounce" id="debounce" oninput="testDebounce()">
+		</div>
+		
+		<div>
+			<h3>test throttle</h3>
+			<input type="text" placeholder="test throttle" id="throttle" oninput="testThrottle()">
+		</div>
+		
+		
+		<!-- 快速切换 -->
+		<style>
+			.tabs{
+				display: flex;
+				flex-wrap: wrap;
+			}
+			.tab{
+				padding: 0 20px;
+				line-height: 60px;
+				background: #ff0000;
+				color: #fff;
+			}
+		</style>
+		<div class="tabs">
+			<div class="tab">11</div>
+			<div class="tab">11</div>
+			<div class="tab">11</div>
+			<div class="tab">11</div>
+			<div class="tab">11</div>
+			<div class="tab">11</div>
+		</div>
+		
+		<div id="buttons">
+			<input type="checkbox">
+			<input type="checkbox">
+			<input type="checkbox">
+			<button>222</button>
+		</div>
+		
+		
+		<script>
+			function a(obj) {
+			  obj.a = 2;
+			  obj = { a: 3 }; // 指向新的地址
+			  obj.a = 55
+			  return obj;
+			}
+			const obj3333 = { a: 1 };
+			a(obj3333);
+			console.log(obj3333); //引用对象,所以输出2
+			
+			
+			var length = 10;
+			function fn() {
+			  console.log(this.length);
+			}
+			var yideng = {
+			  length: 5,
+			  method: function (fn) {
+			    fn(); // 直接调用this->window
+			    arguments[0](); // arguments类数组
+			  },
+			};
+			yideng.method(fn, 1); 
+			
+			
+			var arr1 = [1, 2, 3, 4]
+			var res = arr1.reduce(function (sum, item) {
+			    return sum + item},3)
+			alert(res);
+			
+			// 优先级 ! 取反 null、undefined、NaN，''，false 为true，其他未false 
+			console.log('11',[] == [],[] == ![])  // 同类型的不会转换
+			
+			
+			Function.prototype.a1 = () => {alert(1)};
+			Object.prototype.b = () => {alert(2)};
+			function A(){};
+			const a1 = new A();
+			// a1.a1(); // 报错不是通过函数创造的 函数创造new Function
+			a1.b();
+			// 写出执行结果
+			
+			console.log([{a:1},{b:2}].toString())
+			
+			/*
+				closure feature: 1、缓存中间值 2、读取其他函数值 
+				缺点：占内存、速度可能变慢、内存泄漏 => 用完要及时清除
+			*/
+			// https://www.jianshu.com/p/2975c25e4d71
+			/* 
+				debounce 在一段时间内执行一次
+				throttle 每隔一段时间执行一次
+			*/
+			// option => { leading, }
+			function debounce(func,wait,immediate=false) {
+				let timer = null;
+				return function(...args) {
+					let context = this
+					if(timer) clearTimeout(timer)
+					if(timer==null && immediate) func.apply(context,args)
+					timer = setTimeout(function() {
+						!immediate && func.apply(context,args)
+						timer = null
+					},wait)
+				}
+			}
+			
+			let testDebounce = debounce(function() {
+				console.log(111)
+			},1000,true)
+			
+			// 时间戳=>最后一次不执行 定时器=>第/最后一次不执行 完整版 时间戳+定时器
+			function throttle(func,wait){
+				let timer = null,previous = 0;
+				return function(...args) {
+					let context = this
+					let now = Date.now()
+					let remaining = wait - (now - previous)
+					// remaining > wait 防止修改系统时间问题
+					if(remaining < 0 || remaining > wait) {
+						// 清除执行timer
+						if (timer) {
+						    clearTimeout(timer);
+						    timer = null;
+						}
+						func.apply(context,args)
+						previous = now
+					}else if(!timer){
+						timer = setTimeout(function() {
+							func.apply(context,args)
+							timer = null
+							previous = Date.now()
+						},wait)
+					}
+				}
+			}
+			
+			let testThrottle = throttle(function() {
+				console.log(222)
+			},1000)
+			
+			
+			/*
+			 判断属性是否存在, 存在数组、对象形式
+			 resource 目标对象
+			 path 所求属性路径
+			 defaultVal 默认值
+			*/
+			function getAttrVal(resource,path,defaultVal=undefined) {
+				if(typeof(resource) != 'object') throw 'resource is not object'
+				let result = resource;
+				// a[0].b => a.0.b
+				let paths = path.replace(/\[(\d+)\]/,'.$1').split('.')
+				for(let p of paths) {
+					result = Object(result)[p]
+					if(result == undefined) {
+						return defaultVal
+					}
+				}
+				return result
+			}
+			let obj = {a: [22]}
+			console.log(getAttrVal(obj,'a[1]'))
+			
+			// chain key point return this
+			let chain = {
+				get() {
+					console.log(111)
+					return this
+				},
+				set() {
+					console.log(222)
+					return this
+				}
+			}
+			
+			chain.get().set()
+			
+			/*待理解*/
+			// currying 将多个参数的函数变为单个参数的函数  
+			// theory => use closure to realize
+			function currying(...args) {
+				
+			}
+			
+			// 支持多参数传递
+			function progressCurrying(fn, args) {
+			    var _this = this
+			    var len = fn.length;
+			    var args = args || [];
+			
+			    return function() {
+			        var _args = Array.prototype.slice.call(arguments);
+			        Array.prototype.push.apply(args, _args);
+			
+			        // 如果参数个数小于最初的fn.length，则递归调用，继续收集参数
+			        if (_args.length < len) {
+			            return progressCurrying.call(_this, fn, _args);
+			        }
+			
+			        // 参数收集完毕，则执行fn
+			        return fn.apply(this, _args);
+			    }
+			}
+			
+			let testCurrying = progressCurrying(function(a,b,c){
+				return a + b + c
+			},[1,2,3])
+			
+			console.log(testCurrying)
+			
+			// 类数组与数组
+			// 类数组除了用数组的长度，方法不会继承
+			// 类数组转化成为数组的方法： Array.prototype.slice.call,Array.from
+			
+			// 添加数组元素时,length会增加, 赋值length,会截取数组长度,相当于slice,继承Array.prototype方法
+			// 类数组拥有一个length属性,并且其他属性为不是非负整数,数组不能直接调用数组方法
+			
+			// 原型关系和原始值转换
+			let arrayLike = {
+			    length: 10,
+			};
+			console.log(arrayLike instanceof Array); // false
+			console.log(arrayLike.__proto__.constructor === Array); // false
+			console.log(arrayLike.toString()); // [object Object]
+			console.log(arrayLike.valueOf()); // {length: 10}
+			
+			let array = [22,55];
+			console.log(array instanceof Array); // true
+			console.log(array.__proto__.constructor === Array); // true
+			console.log(array.toString()); // ''
+			console.log(array.valueOf()); // []
+			
+			
+			// 类数组转为数组的方法
+			/* 
+				Array.from 补充undefined  
+				Array.prototype.slice.call 稀疏数组 empty
+				Array.prototype.forEach 
+			*/
+			// 1、其长度由length决定，不连续的由undefined/empty补充 2、只考虑0及其整数
+			
+			// closure 可以读取其他函数变量的函数 可以读取其他函数变量，存贮中间值， 不污染全局
+			// 内存增大，可能影响运行速度，造成内存泄漏，使用过后应该及时清空内存（即赋值为null）
+			
+			// 模块封装 保存中间值
+			
+			let arr = [{
+						id: 1,name: 11, pid: 0
+					},
+					{
+						id: 2,name: 12, pid: 0,
+					},
+					{
+						id: 3,name: 13, pid: 1,
+					},
+					{
+						id: 4,name: 14, pid: 3
+				}]
+			// function toTree(arr1,pid) {
+			// 	let result = [] // 利用堆的特性
+			// 	for(let i=0; i<arr1.length;i++) {
+			// 		if(arr1[i].pid == pid) {
+			// 			result.push({
+			// 				id: arr1[i].id,
+			// 				name: arr1[i].name,
+			// 				pid: arr1[i].pid,
+			// 				children: toTree(arr1,arr1[i].id)
+			// 			})
+			// 		}
+			// 	}
+			// 	return result
+			// }
+			
+			
+			// 代码实现
+			
+			function toTree(list,key='id',pkey="pid",pid = 0) {
+				let result = []
+				for(let item of list) {
+					if(item[pkey] == pid){
+						result.push({
+							...item,
+							children: toTree(list,key,pkey,item[key])
+						})
+					}
+				}
+				return result
+			}
+			console.log(toTree(arr))
+			// 问题：1、arr不变，循环次数应递减  2、无法指定字段
+			
+			function treeUtil(data,key,parentKey,map) {
+			    this.data=data;
+			    this.key=key;
+			    this.parentKey=parentKey;
+			    this.treeParentKey=parentKey;   //parentKey要转换成什么属性名称
+			    this.treeKey=key;           //key要转换成什么属性名称
+			    this.map=map;
+			    if(map){
+			        if(map[key])this.treeKey=map[key];
+			    }
+			    this.toTree=function () {
+			        var data=this.data;
+			        var pos={};
+			        var tree=[];
+			        var i=0;
+			        while(data.length!=0){
+			            if(data[i][this.parentKey]==0){
+			                var _temp = this.copy(data[i]);
+			                tree.push(_temp);
+			                pos[data[i][this.key]]=[tree.length-1]; 
+			                data.splice(i,1);
+			                i--;
+			            }else{
+			                var posArr=pos[data[i][this.parentKey]];
+			                if(posArr!=undefined){                      
+			                    var obj=tree[posArr[0]];
+			                    for(var j=1;j<posArr.length;j++){
+			                        obj=obj.children[posArr[j]];
+			                    }
+			                    var _temp=this.copy(data[i]);
+			                    obj.children.push(_temp);
+			                    pos[data[i][this.key]]=posArr.concat([obj.children.length-1]);
+			                    data.splice(i,1);
+			                    i--;
+			                }
+			            }
+			            i++;
+			            if(i>data.length-1){
+			                i=0;
+			            }
+			        }
+			        return tree;
+			    }
+			    this.copy=function (item) {
+			        var _temp={
+			            children:[]
+			        };
+			        _temp[this.treeKey]=item[this.key];
+			        for(var _index in item){
+			            if(_index!=this.key && _index!=this.parentKey){
+			                var _property = item[_index];
+			                if((!!this.map) && this.map[_index])
+			                    _temp[this.map[_index]]=_property;
+			                else
+			                    _temp[_index]=_property;
+			            }
+			        }
+			        return _temp;
+			    }
+			}
+			
+			let Tree = new treeUtil(arr,'id','pid')
+			console.log(Tree.toTree())
+			
+			
+			// console.log(loop(arr)) // loop is not defined => closure
+			function toArray(arr) {
+				let result = [];
+				function loop(arr) {
+					for(let item of arr) {
+						result.push({
+							id: item.id,
+							name: item.name, 
+							pid: item.pid
+						})
+						if(item.children.length) loop(item.children)
+					}
+				}
+				loop(arr)
+				return result
+			}
+			console.log(toArray(toTree(arr,0)))
+			
+			// 同步任务,异步任务=>任务列队=>调用栈=>执行
+			
+			// 事件循环 => 判断调用栈是否空以及将某个任务加入到调用栈中的过程
+			
+			// 异步任务: 宏任务&微任务
+			// 宏任务: setTimeout,setInterval,script,UI渲染, I/O操作
+			// 微任务: new Promise().then,
+			
+			// promise 1 三种状态: pending fulfilled rejected,
+			// 		2 两个参数 reject resolve
+			// 		3 then 返回一个新的promise实例,接受两个参数onResolved(fulfilled), onRejected(rejected)
+			// 		4 catch 返回一个新的promise实例
+			// 		5 finally 不管promise状态如何都会执行,不接受任何参数
+			// 		6 promise.all 是接受多个promise对象的数组或者iterator 只要参数中有一个catch都会触发catch,若调用了catch就不会触发catch因为4
+			// 		7 Promise.race()
+			// 		8 Promise.resolve()
+			// 		9 Promise.reject()
+					let url = 'https://www.baidu.com/s?cl=3&tn=baidutop10&fr=top1000&wd=%23%E4%B8%AD%E5%9B%BD%E5%A5%B3%E8%B6%B32%E6%AF%948%E6%83%A8%E8%B4%A5%E8%8D%B7%E5%85%B0%E5%87%BA%E5%B1%80%23&rsv_idx=2&rsv_dl=fyb_n_homepage&hisfilter=1'
+					let urlObj = {}
+					decodeURIComponent(url).replace(/([^?&=]+)=([^?&=]*)/g,(res,$1,$2)=>{
+						urlObj[$1] = $2
+					})
+					console.log(urlObj)
+					// /([^?&=]+)=([^?&=]*)/g
+					
+					let urlParams = decodeURIComponent(url.split('?')[1]).replace(/&/g,'","').replace(/=/g,'":"')
+					console.log(JSON.parse('{"'+urlParams+'"}'))
+					
+			/*  长列表：数据量较大且无法分页的
+				两种方式：懒渲染 => 滚动加载到可见区域加载剩余部分列表
+						 可见区域渲染 => 只渲染在可见区域的部分
+				两个概念：可滚动区域、可见区域
+				原理：用数据保存所有元素的位置,只渲染可见区域的
+				注意：节流
+			*/
+			
+			// cacheRequest 缓存请求，请求过的不用再次请求
+			// 闭包形式 可以使用 对象 {} 或者 new Map（推荐） new Set 类似于数组，但是成员的值都是唯一的
+			function cacheRequest() {
+				let urls = new Map() 
+				let cache = {}
+				cache.get = function(url,params){
+					let lastUrl = url+":" + params
+					// 对象需要拼接成字符串 注意数组
+					return urls.has(lastUrl)?urls.get(lastUrl):null
+				}
+				cache.set = function(url,params,result){
+					let lastUrl = url+":" + params
+					return urls.set(lastUrl,result)
+				}
+				return cache
+			}
+			// 构造函数
+			function CacheRequest1() {
+				this.urls = new Map()
+				this.get = function(url,params) {
+					let lastUrl = url+":" + params
+					// 对象需要拼接成字符串 注意数组
+					return this.urls.has(lastUrl)?this.urls.get(lastUrl):null
+				}
+				this.set = function(url,params,result) {
+					let lastUrl = url+":" + params
+					return this.urls.set(lastUrl,result)
+				}
+			}
+			
+			let cache = cacheRequest()
+			let result = cache.get('/user',{id:22})
+			console.log(result)
+			cache.set('/user',{id:22},22)
+			let result1 = cache.get('/user',{id:22})
+			console.log(result1)
+			cache.set('/user',{id:22,name:22},33)
+			let result2 = cache.get('/user',{id:22,name:22})
+			console.log(result2)
+			// 释放内存
+			cache = null
+			
+			let cache1 = new CacheRequest1()
+			let result3 = cache1.get('/user',{id:22})
+			console.log(result3)
+			cache1.set('/user',{id:22,name:22},33)
+			let result4 = cache1.get('/user',{id:22,name:22})
+			console.log(result4)
+			
+			// 闭包与构造函数
+			/*
+				共同点: 实现变量私有化
+				不同点：闭包可能造成内存泄漏、闭包需手动释放内存,闭包在返回多个函数不适用，this指向混乱，应采用构造函数好点
+				能用构造函数的别用闭包，闭包容易造成泄漏
+			*/
+			
+			// commonJs 同步/异步加载 在运行中引入代码
+			// ES6 在编译中引入代码,所以无法进行条件判断
+			// AMD 异步加载,提前加载
+			// CMD 异步加载,就近加载
+			// UMD Commonjs与AMD结合
+			
+			/* 
+			  a)在不使用vue、react的前提下写代码解决一下问题
+			    一个List页面上，含有1000个条目的待办列表，现其中100项在同一时间达到了过期时间，需要在对应项的text-node里添加“已过期”文字。需要尽可能减少dom重绘次数以提升性能。
+			  b)尝试使用vue或react解决上述问题
+			*/
+		   
+			// jsonp get script
+			// 后台设置跨域 cors 设置消息头
+			// 前端设置跨域 proxy 代理 集成方式
+			
+			// postMessage 使用inframe
+			// domain 适用于局域网
+			
+			// jsonp get script
+			// cors 设置消息头
+			// proxy 代理
+			// postMessage 配合inframe使用
+			// domain 适用于局部网
+			
+			// 同源策略 协议+域名+端口 不同于域名是不允许进行脚本的交互
+			// 作用:防止恶意文件,
+			
+			
+			// setInterval 存在时间不准问题，解决方法用setTimeout代替
+			
+			function interval(func,wait,...args) {
+				let context = this;
+				function setInterval() {
+					setTimeout(function(){
+						// args=>函数的参数
+						func.apply(context,args)
+						setInterval()
+					},wait)
+				}
+				setInterval()
+			}
+			interval(function(msg){
+				console.log(11,msg)
+			},1000,1)
+			
+			function Interval() {
+				this.hook = false
+			}
+			Interval.prototype.setInterval = function(func,wait,...args) {
+				let context = this;
+				if(this.hook) return
+				setTimeout(function(){
+					// args=>函数的参数
+					func(...args)
+					context.setInterval(func,wait,...args)
+				},wait)
+			}
+			
+			Interval.prototype.clearInterval = function(){
+				this.hook = true
+			}
+			let time = 0
+			let newInterval = new Interval()
+			newInterval.setInterval(function(msg){
+				console.log(msg)
+				if(time > 5) newInterval.clearInterval()
+				time++
+			},1000,22)
+			
+			class Interval1 {
+				constructor() {
+					this.hook = false
+				}
+				setInterval(func,wait,...args) {
+					let context = this;
+					if(this.hook) return
+					setTimeout(function(){
+						// args=>函数的参数
+						func(...args)
+						context.setInterval(func,wait,...args)
+					},wait)
+				}
+				clearInterval() {
+					this.hook = true
+				}
+			}
+			
+			let newInterval1 = new Interval1()
+			let time1 = 0
+			newInterval1.setInterval(function(msg=33,name=11){
+				if(time1 > 5) newInterval1.clearInterval()
+				time1++
+			},1000)
+			
+			function yideng(name,color) {
+			  console.log(name,color);
+			}
+			(function () {
+			  if (false) { // if是惰性的
+				 a = 11
+			    function yideng() {
+			      console.log(2);
+			    }
+			  }
+			  console.log(typeof yideng);
+			  // yideng(); // 报错
+			})();
+			// 在函数体内中定义函数，会整个提前，但是在块内定义，只会声明提前，变量在块内定义,假的话会报错
+			
+			Function.prototype.bind1=function(context,...args){
+				let that = false; // 记录是否绑定过 防止null
+				let curThis = this
+				return function(...innerArgs){
+					if(that === true) return
+					curThis.apply(context,[...args,...innerArgs])
+					that = true
+				}
+			}
+			let bindYideng = yideng.bind1(null,111)
+			
+			bindYideng(555,366)
+			
+			
+			function Animal(name,color){
+			  this.name = name;
+			  this.color = color;
+			}
+			Animal.prototype.say = function(){
+			  return `I'm a ${this.color} ${this.name}`;
+			}
+			const Cat = Animal.bind(null,'cat');
+			const cat = new Cat('white');
+			if(cat.say() === "I'm a white cat" && cat instanceof Cat && cat instanceof Animal){
+			  console.log('sunccess');
+			}
+			
+			// for
+			// api
+			'3333'.split('').reverse().reduce((prevous,next,index)=>{
+				return (index%3==0?next+',':next)+prevous
+			})
+			// 正则
+			'3333.22'.replace(/\B(?=(\d{3})+(?!\d))/g,',')
+			// toLocalString
+			3333.33.toLocaleString('en-US')
+			
+			function formatNumber(num) {
+			  /*
+			      ①/\B(?=(\d{3})+(?!\d))/g：正则匹配非单词边界\B，即除了1之前的位置，其他字符之间的边界，后面必须跟着3N个数字直到字符串末尾
+			    ②(\d{3})+：必须是1个或多个的3个连续数字;
+			    ③(?!\d)：第2步中的3个数字不允许后面跟着数字;
+			  */
+			  return (num+'').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+			}
+			console.log(formatNumber(1234567890)) // 1,234,567,890
+			// 转换函数
+			parseFloat() 
+			parseInt() // 两个参数 a => 转换内容 b => 进制 默认为10
+			// 强制类型
+			Number()
+			Boolean()
+			String()
+			// 弱类型
+			
+			
+			let tabAll = document.querySelectorAll('.tab')
+			for(let i=0;i<tabAll.length;i++){
+				tabAll[i].onclick = debounce(function(){
+					console.log(123456)
+					
+				},50)
+			}
+			
+			// .onclick = function(){
+			// 	console.log(111)
+			// }
+			
+			
+			
+			/**
+			 * 函数防抖，一定时间内连续触发事件只执行一次
+			 * @param {*} func 需要防抖的函数
+			 * @param {*} delay 防抖延迟
+			 * @param {*} immediate 是否立即执行，为true表示连续触发时立即执行，即执行第一次，为false表示连续触发后delay ms后执行一次
+			 */
+			
+			
+			let flag = false             // 标志位，表示当前是否正在请求数据
+			let xhr = null
+			
+			let request = (i) => {
+			    if (flag) {
+			        clearTimeout(xhr)
+			        console.log(`取消第${i - 1}次请求`)
+			    }
+			    flag = true
+			    console.log(`开始第${i}次请求`)
+			    xhr = setTimeout(() => {
+			        console.log(`请求${i}响应成功`)
+			        flag = false
+			    }, Math.random() * 200)
+			}
+			
+			let fetchData = debounce(request, 50)  // 防抖
+			
+			
+			// 模拟连续触发的请求
+			let count = 1 
+			let getData = () => {
+			  setTimeout(() => {
+			    fetchData(count)
+			    count++
+			    if (count < 11) {
+			        getData()
+			    }
+			  }, Math.random() * 200)
+			}
+			getData()
+			
+			
+			/* 某次测试输出：
+			    开始第2次请求
+			    请求2响应成功
+			    开始第3次请求
+			    取消第3次请求
+			    开始第4次请求
+			    请求4响应成功
+			    开始第5次请求
+			    请求5响应成功
+			    开始第8次请求
+			    取消第8次请求
+			    开始第9次请求
+			    请求9响应成功
+			    开始第10次请求
+			    请求10响应成功
+			*/
+			
+			
+			function Foo(name) {
+				this.name=name
+			}
+			let newFoo = new Foo(211052052)
+			console.log(newFoo.name)
+			
+			
+			let user = function(name) {
+			    this.name = name;
+			    this.getName = function () {
+			        console.log(this.name);
+			    }
+			};
+			
+			//为了避免下面比较name时，对值进行比较，这里故意传入了String对象
+			let user1 = new user(111);
+			let user2 = new user(111);
+			
+			console.log(user1.name == user2.name);    //输出false
+			console.log(user1.getName === user2.getName); //输出false
+			
+			function arrRepeat(length,data) {
+				console.log(this)
+				return Array.apply(null,{length: length}).map(item=>data)
+			}
+			
+			var testArr = arrRepeat(10000,{})
+			console.time('testArr100000')
+			console.timeEnd('testArr100000')
+			// arr100000: 0.002685546875ms
+			
+			// 不支持 argus = {length: 10}
+			Function.prototype.myapply = function (context, argus) {
+			    if (typeof this !== 'function') {
+			        throw new TypeError(this.name + ' not funciton')
+			    }
+			    const fn = this
+			    let result = null
+			
+			    context = context || window
+			    argus = argus || []
+			    context.fn = fn
+			    result = context.fn(...argus)
+			    delete context.fn // 只是获取结果，使用过后删除
+				
+			    return result
+			}
+			let obj1 = {}
+			let result66 = arrRepeat.apply(obj1,[22,33])
+			console.log(result66)
+			
+			function SuperClass(name){
+			  this.SuperObj = name
+			}
+			SuperClass.prototype.SuperMethod = function(){}
+		
+		  function SubClass(opt){
+			SuperClass.call(this,opt)
+			//继承父类
+		  }
+		
+		  SubClass.prototype = new SuperClass()
+		  //在构造函数继承中再次把原型属性赋值到子类的原型属性上
+		
+		  //实例化方法
+		  var Sub = new SubClass('222')
+
+		  console.log(Sub);
+		  
+		</script>
+	</body>
+</html>

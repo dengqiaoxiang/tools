@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script src="./reg.js"></script>
+		<script src="./reg1.js"></script>
+		<script>
+			
+			 function get(source, path, defaultValue = undefined) {
+			    // a[3].b -> a.3.b -> [a,3,b]
+			   // path 中也可能是数组的路径，全部转化成 . 运算符并组成数组
+			    const paths = path.replace(/\[(\d+)\]/g, ".$1").split(".");
+			    let result = source;
+			    for (const p of paths) {
+			      // 注意 null 与 undefined 取属性会报错，所以使用 Object 包装一下。
+			      result = Object(result)[p];
+			      if (result == undefined) {
+			        return defaultValue;
+			      }
+			    }
+			    return result;
+			  }
+			  // 测试用例
+			  // console.log(get({ a: null }, "a.b.c", 3)); // output: 3
+			  // console.log(get({ a: undefined }, "a", 3)); // output: 3
+			  console.log(get({ a: {b: 2} }, "a.b", 3)); // output: 3
+			  console.log(get({ a: [{ b: 1 }] }, "a[0].b", 3)); // output: 1
+			  
+			  
+			  var s = "ggle gogle google gooogle goooogle gooooogle goooooogle gooooooogle goooooooogle";
+			  
+			  var r = /go/g;
+			  console.log(s.match(r));
+			  var str = "ggleg ogle googleg gEEEogle oooogleo gooooogle goooooogle oooogle egoooooooogle";
+			  let arr = str.split(' ')
+			  for(let item of arr) {
+				  item.replace(/^\b\b$\1/g, )
+			  }
+			  // console.log(str.)
+			  
+			  
+			  // 正则面试题
+			  // 1. 过滤敏感字符的正则表达式
+			  // 2. 单词首尾相同字母改为大写,其他为小写
+			  // 3. 每句首字母改为大小
+			  // 4. 10000 => 10k
+			  
+			  let regExp = new RegExp(/\d+/)
+			  console.log(regExp.exec('ddd111'))
+			  
+			  var s1 = "one:2; two:2";
+			  var r1 = /\w*(?!=)/;  //使用正前向声明，指定执行匹配必须满足的条件
+			 console.log(s1.match(r1));  //返回数组["two"]
+			 
+			var s6 = "<h1>title<h1><p>text<p>";
+			var r6 = /(<\/?\w+>)\w+\1/;
+			console.log(s6.match(r6),s6.search('h1')) //返回数组["<h1>title<h1>","<p>text<p>"]
+			var sl = "abc";
+			var rl = /(?:\w*?)|(?:\d*?)/;
+			console.log(rl.test(sl));
+			
+			
+			var str = '10000'
+			var reg = /(?=(\B)(\d{3})+$)/g
+			console.log(str.replace(reg,'.'),typeof str)
+			
+			console.log(upperHeadTail('dfffsd bddddb sdffd'))
+			
+			var s9 = "<meta & charset='utf-8' > ";  //待过滤的表单提交信息
+			var r9 = /\'|\"|\<|\>/gi;  //过滤敏感字符的正则表达式
+			function f() {  //替换函数
+			    ////把敏感字符替换为对应的网页显示的编码格式
+			    return "&#" + arguments[0].charCodeAt(0) + ";";
+			}
+			var a9 = filterHtml(s9);  //执行过滤替换 
+			console.log(tools.htmlEncode(s9));
+			var num1 = 1001;
+			console.log(getURLParam('utm_medium','https://blog.csdn.net/guang_s/article/details/87364440?utm_term=javascript%E5%B7%A5%E5%85%B7%E7%B1%BB&utm_medium=distribute.pc_aggpage_search_result.none-task-blog-2~all~sobaiduweb~default-4-87364440&spm=3001.4430'));
+			console.log(getParams('utm_medium','https://blog.csdn.net/guang_s/article/details/87364440?utm_term=javascript%E5%B7%A5%E5%85%B7%E7%B1%BB&utm_medium=distribute.pc_aggpage_search_result.none-task-blog-2~all~sobaiduweb~default-4-87364440&spm=3001.4430'));
+			
+			
+			var str2 = "ab bb cc dd";
+			var toHumpForm = 'get-element-by-id'
+			var arr1 = ['fd','az']
+			var reg = /\.0+$|(\.[0-9]*[1-9])0+$/
+			let num = '-10000000000000'
+			console.log('.0000'.replace(reg,'$1'))
+			console.log(toThousandFilter(num))
+			console.log(toHumpForm.replace(/-(\w)/g, (m,$1)=> $1.toUpperCase()))
+			console.log(Date.parse('2012-8-21'),arr1.sort())
+			
+			
+			function addDate(date, days) {
+					if (days == undefined || days == '') {
+						days = 1;
+					}
+					var date = new Date(date);
+					date.setDate(date.getDate() + days);
+					var month = date.getMonth() + 1;
+					var day = date.getDate();
+					return date.getFullYear() + '-' + getFormatDate(month) + '-' + getFormatDate(day);
+				}
+		
+				// 日期月份/天的显示，如果是1位数，则在前面加上'0'
+				function getFormatDate(arg) {
+					if (arg == undefined || arg == '') {
+						return '';
+					}
+		
+					var re = arg + '';
+					if (re.length < 2) {
+						re = '0' + re;
+					}
+		
+					return re;
+				}
+				let arr1 = {
+					length: 2,
+				}
+			console.log(addDate('2021/12/31',5))
+		</script>
+	</body>
+</html>

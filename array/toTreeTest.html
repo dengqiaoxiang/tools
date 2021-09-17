@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>数组转树</title>
+	</head>
+	<body>
+		
+		<script>
+			
+			let arr =[
+			    {id:2,name:'部门B',parentId:0},
+			    {id:3,name:'部门C',parentId:1},
+			    {id:1,name:'部门A',parentId:2},
+			    {id:4,name:'部门D',parentId:0},
+			    {id:5,name:'部门E',parentId:2},
+			    {id:6,name:'部门F',parentId:3},
+			    {id:7,name:'部门G',parentId:2},
+			    {id:8,name:'部门H',parentId:4}
+			];
+			
+			
+			/**
+			 * 数组转树  非递归求解
+			 * 利用数组和对象相互引用  时间复杂度O(n)
+			 * @param {Object} list 数组列表
+			 * @param {Number} id  数组项id
+			 * @param {Number} pid 数组项pid 指定父级id
+			 * @param {Number} sid 数组项sid 指定父级id
+			 * @param {Number} child 
+			 */
+			
+			function toTree1(list, id='id', pid='pid', child="children") {
+				let result = []
+				let hash = {}
+				// 拷贝对象
+				let newList = JSON.parse(JSON.stringify(list))
+				let len = newList.length
+				// 转obj键值对
+				for(let i=0; i < len; i++){
+					hash[newList[i][id]] = newList[i]
+				}
+				for(let i=0; i < len; i++){
+					let pidObj = hash[newList[i][pid]]
+					if(pidObj){
+						pidObj[child] = pidObj[child] || []
+						pidObj[child].push(newList[i])
+					}else {
+						result.push(newList[i])
+					}
+						
+				}
+				return result
+			}
+			console.log(toTree1(arr,'id','parentId'))
+			
+			
+			
+			/**
+			 * 数组转树  递归求解
+			 * @param {Object} list 数组列表
+			 * @param {Number} id  数组项id
+			 * @param {Number} pid 数组项pid
+			 * @param {Number} pid
+			 */
+			
+			// 递归 也就是JS执行函数时会进入另外一个空间执行函数，这个空间成为调用栈。若一个函数里面嵌套自己，最终会形成多个调用栈，一层层递进运算再回退运算称为递归运算
+			function ArrayToTree(list,id='id', pid='pid', parId = 0){
+				let len = list.length
+				// 拷贝对象
+				let newList = JSON.parse(JSON.stringify(list))
+				// 实际上改造newList, 由于newList是引用类型 + 闭包有保存中间值的作用, 再取出相对应的值
+				function loop(parId) {
+					let result = []
+					for(let i=0; i < len; i++) {
+						if(newList[i][pid] == parId){
+							newList[i].children = loop(newList[i][id])
+							result.push(newList[i])
+						}
+					}
+					return result
+				}
+				// console.log(newList) 改造过后的newList
+				return loop(parId)
+			}
+			let result = ArrayToTree(arr,'id','parentId')
+			console.log(result)
+			
+			/**
+			 * 数组转树  构造函数递归求解
+			 * @param {Object} list 数组列表
+			 * @param {Number} id  数组项id
+			 * @param {Number} pid 数组项pid
+			 * @param {Number} pid
+			 */
+			
+			function toTree2(list, id='id', pid='pid', parId = 0) {
+				this.data = JSON.parse(JSON.stringify(list));
+				this.key = id;
+				this.pkey = pid;
+				this.parId = parId;
+				// this.toTree = function(){
+				// 	let len = this.data.length
+				// 	let that = this;
+				// 	function loop(parId) {
+				// 		let result = []
+				// 		for(let i=0; i < len; i++) {
+				// 			if(that.data[i][that.pkey] == parId){
+				// 				that.data[i].children = loop(that.data[i][that.key])
+				// 				result.push(that.data[i])
+				// 			}
+				// 		}
+				// 		return result
+				// 	}
+				// 	// console.log(newList) 改造过后的newList
+				// 	return loop(this.parId)
+				// }
+			}
+			toTree2.prototype.toTree = function(){
+				let len = this.data.length
+				let that = this;
+				function loop(parId) {
+					let result = []
+					for(let i=0; i < len; i++) {
+						if(that.data[i][that.pkey] == parId){
+							that.data[i].children = loop(that.data[i][that.key])
+							result.push(that.data[i])
+						}
+					}
+					return result
+				}
+				// console.log(newList) 改造过后的newList
+				return loop(this.parId)
+			}
+			let newToTree2 = new toTree2(arr,'id','parentId')
+			console.log(newToTree2.toTree())
+			
+			
+			// 
+			function TreeToArray(list){
+				let result = []
+				function loop(arr) {
+					for(let i=0, len = arr.length; i < len; i++) {
+						result.push({
+							id: arr[i].id,
+							name: arr[i].name,
+							parentId: arr[i].parentId	
+						})
+						arr[i].children && loop(arr[i].children)
+					}
+				}
+				loop(list)
+				return result
+			}
+			
+			console.log(TreeToArray(result))
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</script>
+		
+	</body>
+</html>

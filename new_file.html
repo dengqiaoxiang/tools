@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<style type="text/css">
+			#id{
+				width: 100px;
+				height: 100px;
+				overflow: hidden;
+				text-overflow:ellipsis;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 3;
+			}
+		</style>
+		<div id="id">
+			122222222222说的地方额度 发个 的跟overflow: hidden;
+display: -webkit-box;//将元素设为盒子伸缩模型显示
+-webkit-box-orient: vertical;//伸缩方向设为垂直方向
+-webkit-line-clamp: 3;//超出3行隐藏，并显示省略号overflow: hidden;
+display: -webkit-box;//将元素设为盒子伸缩模型显示
+-webkit-box-orient: vertical;//伸缩方向设为垂直方向
+-webkit-line-clamp: 3;//超出3行隐藏，并显示省略号overflow: hidden;
+display: -webkit-box;//将元素设为盒子伸缩模型显示
+-webkit-box-orient: vertical;//伸缩方向设为垂直方向
+-webkit-line-clamp: 3;//超出3行隐藏，并显示省略号overflow: hidden;
+display: -webkit-box;//将元素设为盒子伸缩模型显示
+-webkit-box-orient: vertical;//伸缩方向设为垂直方向
+-webkit-line-clamp: 3;//超出3行隐藏，并显示省略号
+		</div>
+		<script>
+				// es5 function  es6 object
+				// es5 可以直接调用,其返回undefined  es6 new
+				// es5 可以重复声明 es6不可以重复声明，内部也一样
+				// es5 可以声明提前 es6不可以声明提前
+				// es6 静态方法不可枚举
+				
+				
+				function Plane(name) {
+					this.name = name
+				}
+				Plane.prototype.getName = function() {
+					return this.name
+				}
+				console.log(new Plane(111))
+				let es5Class = new Plane(111)
+				es5Class.name= 222
+				console.log(es5Class.getName())
+				//引用类型 => 指向不同的地址
+				console.log(new Plane(111) == new Plane(111))
+				class Plane1 {
+					constructor(name) {
+						this.name = name
+					}
+					getName() {
+						this.name
+					}
+				}
+				console.log(new Plane1(111))
+				let es6Class = new Plane(111)
+				es6Class.name= 222
+				console.log(es6Class.getName())
+				// console.log(Plane1(111)) // Class constructor Plane1 cannot be invoked widthout 'new'
+				
+				
+			
+				function parseTime(time, cFormat) {
+				  if (arguments.length === 0 || !time) {
+				    return null
+				  }
+				  const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
+				  let date
+				  if (typeof time === 'object') {
+				    date = time
+				  } else {
+				    if ((typeof time === 'string')) {
+				      if ((/^[0-9]+$/.test(time))) {
+				        // support "1548221490638"
+				        time = parseInt(time)
+				      } else {
+				        // support safari
+				        // https://stackoverflow.com/questions/4310953/invalid-date-in-safari
+				        time = time.replace(new RegExp(/-/gm), '/')
+				      }
+				    }
+				
+				    if ((typeof time === 'number') && (time.toString().length === 10)) {
+				      time = time * 1000
+				    }
+				    date = new Date(time)
+				  }
+				  const formatObj = {
+				    y: date.getFullYear(),
+				    m: date.getMonth() + 1,
+				    d: date.getDate(),
+				    h: date.getHours(),
+				    i: date.getMinutes(),
+				    s: date.getSeconds(),
+				    a: date.getDay()
+				  }
+				  const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
+				    const value = formatObj[key]
+				    // Note: getDay() returns 0 on Sunday
+				    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value ] }
+				    return value.toString().padStart(2, '0')
+				  })
+				  return time_str
+				}
+			
+			console.log(parseTime(1624863732))
+			
+			const arr = [1, 2, 3, 4, 5];
+			function getData() {
+			  return new Promise((resolve, reject) => {
+			    setTimeout(() => {
+			      resolve("data");
+			    }, 1000);
+			  });
+			}
+			
+			let name =  'name'
+			
+			let obj = {
+				[name]: '11'
+			}
+			
+			
+			console.log(name);
+			
+			(async () => {
+			  const result = arr.map(async () => {
+			    console.log("start");
+			    const data = await getData();
+			    console.log(data);
+			    return data;
+			  });
+			  console.log(result);
+			})();
+			
+			function instanceOf(left,right) {
+				let rightProto = right.prototype
+				if(left === null || left === undefined) return false 
+				left = left.__proto__;
+				console.log(left)
+				while(left) {
+					if(left === rightProto) {
+						return true
+					}
+					left = left.__proto__;
+				}
+				return false
+				
+			}
+			console.log(instanceOf(undefined,Object)) 
+			
+			
+			
+			// 5 start -> 遍历每一项开始
+			// (5) [Promise, Promise, Promise, Promise, Promise] -> 返回的结果
+			// 5 data -> 遍历每一项异步执行返回的结果
+			
+			// vuex 内存 响应 =刷新 locationStorage 本地 没响应  
+			
+			
+			let work = new worker('worker.js')
+			work.postMessage(20)
+			work.onmessage = function(event){
+				console.log(event.data)
+				this.terminate()
+			}
+			
+			后备内容
+			
+			// 子进程 worker.js self代表window可以省略或者改为this
+			self.onmessage = function(event){
+				let data = event.data
+				let result = log(data)
+				this.postMessage(result)
+			}
+			function log(args){
+				return args + 1
+			}
+
+		</script>
+	</body>
+</html>

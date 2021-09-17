@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>grid</title>
+	</head>
+	<body>
+		<a href="http://www.ruanyifeng.com/blog/2019/03/grid-layout-tutorial.html">grid</a>
+		<a href="https://www.html.cn/archives/8510/#prop-justify-content">grid</a>
+		
+		
+		<div className="cover">
+		   <div className="item item1 red">1</div> <!-- item是项目 -->
+		   <div className="item item2 black">2</div>
+		 </div><!-- cover就是容器 -->
+		
+		
+		<style type="text/css">
+			.ul1{
+				display: grid;
+				/* grid-template-columns: 100px 100px;
+				grid-template-rows: 100px 100px 100px; */
+				grid-template-columns: repeat(3,100px);
+				grid-template-rows: repeat(auto-fill,100px);
+				grid-gap: 20px 10px;
+				 grid-template-areas: 
+				    "header header header"
+				    "main . sidebar"
+				    "footer footer footer";
+				
+				/* place-items: stretch; */
+				align-content: end;
+				place-content: space-between;
+			}
+			.ul1 li{
+				border: 1px solid #ddd;
+			}
+		</style>
+		
+		<ul class="ul1">
+			<li>容器</li>
+			<li>项目</li>
+			<li>网格线</li>
+			<li>单元格</li>
+			<li>行和列</li>
+		</ul>
+		
+		<h2>222</h2>
+	</body>
+</html>

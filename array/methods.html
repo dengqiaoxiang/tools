@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>methods</title>
+	</head>
+	<body>
+		
+		<h2>Array方法</h2>
+		concat
+		push
+		unshift
+		shift
+		pop
+		splice(index,num,....)
+		reverse
+		join
+		slice
+		forEach
+		indexOf
+		sort
+		
+		<!-- es6 -->
+		map
+		filter
+		some
+		every
+		reduce
+		find
+		findIndex
+		includes
+		<ul>
+			<li>
+				concat 连接两个或者多个数组，并返回新数组
+			</li>
+			<li>
+				push 在数组末尾新增一个或者多个元素，并返回新的长度
+			</li>
+			<li>
+				unshift 在数组开头新增一个或者多个元素，并返回新的长度
+			</li>
+			<li>
+				pop 删除并返回数组最后一个元素
+			</li>
+			<li>
+				shift 删除并返回数组第一个元素
+			</li>
+			<li>
+				splice(index,num,....)  指定数组下标删除/新增/代替
+			</li>
+			<li>
+				forEach(function(curValue,index,arr){},thisValue) curValue当前元素项，index下标、arr原数组，thisValue默认指向window<br>
+				forEach无法提前结束、会跳过空值、没有返回值、循环次数由数组初始长度决定，只适合集合和遍历<br>
+				<a href="https://blog.csdn.net/qq_35370002/article/details/107913331">参考</a>
+			</li>
+			<li>
+				reverse 没有参数 颠倒排序 改变原数组并返回新数组
+			</li>
+			<li>
+				sort(callback) 修改原数组 默认unicode排序<br>function(a,b){return a-b}顺叙<br>function(a,b){return b-a}倒叙<br>
+				function(a,b){return 0.5 - Math.random()} 乱序<br>function(a,b){return a.c - a.c} 对象排序
+			</li>
+			<li>
+				join(string) 按照string方式拼接数组元素成为字符串
+			</li>
+			<li>
+				indexOf(item,start) item查找元素 start指定下标 可负 找不到返回-1 返回找到第一个匹配元素下标
+ 			</li>
+			<li>
+				lastIndexOf(item,start) item查找元素 start指定下标 可负 找不到返回-1 返回找到最后一个匹配元素下标
+			</li>
+			<li>
+				slice(start,end) 剪切数组 返回新数组 start 可负 
+			</li>
+			<li>
+				map(function(curValue,index,arr){},thisValue) curValue当前元素项，index下标、arr原数组，thisValue默认指向window<br>
+				map效果跟forEach一样，但是唯一区别是map返回新数组，且性能比forEach高70%左右
+			</li>
+			<li>
+				map、filter、some、every、reduce、find 无法提前结束、会跳过空值
+			</li>
+			<li>
+				filter/some/every(function(curValue,index,arr), thisValue)
+			</li>
+			<li>
+				reduce(function(total,curValue,index,arr), initialValue)
+			</li>
+		</ul>
+		
+		<h4>
+			push、pop、unshift、shift、splice、reverse、sort 改变原数组，其他都是返回新数组
+		</h4>
+		<script>
+			var fruits = ["Banana", "Orange", "Apple", "Mango"];
+			var x =  fruits.concat(["Kiwi",'name']);   //  x 的值是 5
+			function age(){
+				
+			}
+			fruits.reverse();
+			let y = fruits.slice(3)
+			console.log(fruits,x,y,age instanceof Function)
+			
+			var arr2 = [1, 3, , 13, 2];
+			arr2.filter(function(item, index) {
+				// item = 2; //修改不了原数组
+				arr2[index] = 2;
+			})
+			let sum = arr2.reduce(function(total,currentValue){
+				return total + currentValue
+			},0)
+			console.log(arr2,sum);
+			
+			// string number(浮点数,整数,NaN) Boolean undefined null
+			// parseFloat() parseInt() NaN
+			// object (object array date function regexp)
+			// symbol
+			// bigInt
+			
+			
+			
+		</script>
+	</body>
+</html>

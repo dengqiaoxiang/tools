@@ -1,0 +1,346 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>防抖与节流</title>
+	</head>
+	<body>
+		
+		<h2><a href="https://blog.csdn.net/weixin_42878211/article/details/108589338" target="_blank">防抖</a></h2>
+		<div>
+			<input type="text" oninput="Input()">
+			<button onclick="cancelDebounce()">取消</button>
+		</div> 
+		<input id="input2" type="text">
+		
+		
+		<h2><a href="https://angula.blog.csdn.net/article/details/108604599" target="_blank">节流</a></h2>
+		
+		<div onmousemove="mousemove1()" style="height: 300px;">555</div>
+		<div onmousemove="mousemove2()" style="height: 300px;">555</div>
+		<input id="input3" type="text">
+		
+		<!-- 事件委托/事件代理 -->
+		<ul onclick="getData(event)">
+			<li data-num="111">111</li>
+			<li data-num="2222">2222</li>
+		</ul>
+		
+		<script src="../loadash.js"></script>
+		<script>
+			
+			/*
+			 防抖 在一段时间内只执行一次，n次触发当前事件，延迟时间为n*wait后请求(immediate=false)或再次请求(immediate=true)
+				  时间取决于n*wait
+			 适用于提交按钮、搜索
+			 
+			 Dom绑定（多个onclick执行第一个）， 脚本绑定（多个onclick执行最后一个）， addEventListener（按顺序执行
+			*/
+			
+			let test = 1 
+			console.log()
+			
+			function debounce(func, wait, immediate = false) {
+				let timeout = null, result
+				// 检查func是否为函数
+				if (typeof func !== 'function') {
+					throw new TypeError('Expected a function');
+				}
+				let debounced = function(...args){
+					let context = this
+					// 预防Dom直接绑定，找不到this,要传入this
+					// if(this == window) {
+					// 	context = args[0]
+					// 	args = args.slice(1)
+					// }
+					timeout && clearTimeout(timeout)
+					if(immediate){
+						if(!timeout) result = func.apply(context,args)
+						timeout = setTimeout(function(){
+							timeout = null
+						},wait)
+					}else{
+						timeout = setTimeout(function(){
+							func.apply(context,args)
+						},wait)
+					}
+					return result
+				}
+				debounced.cancel = function() {
+					clearTimeout(timeout)
+					timeout = null
+				}
+				return debounced
+			}
+			
+			let Input = debounce(function(e){
+				console.log(11)
+			},2000)
+			function cancelDebounce() {
+				Input.cancel()
+			}
+			
+			
+			document.getElementById('input2').oninput = debounce(function(e){
+				console.log(e)
+			},500)
+			
+			/** debounce and throttle
+			 * @param {Function} func
+			 * @param {number} wait
+			 * @param {boolean} immediate
+			 * @return {*}
+			 */
+			
+			function debounce1(func, wait, immediate) {
+			  let timeout, args, context, timestamp, result
+			
+			  const later = function() {
+			    // 据上一次触发时间间隔
+			    const last = +new Date() - timestamp
+			
+			    // 上次被包装函数被调用时间间隔 last 小于设定时间间隔 wait
+			    if (last < wait && last > 0) {
+			      timeout = setTimeout(later, wait - last)
+			    } else {
+			      timeout = null
+			      // 如果设定为immediate===true，因为开始边界已经调用过了此处无需调用
+			      if (!immediate) {
+			        result = func.apply(context, args)
+			        if (!timeout) context = args = null
+			      }
+			    }
+			  }
+			  return function(...args) {
+			    context = this
+			    timestamp = +new Date()
+			    const callNow = immediate && !timeout
+			    // 如果延时不存在，重新设定延时
+			    if (!timeout) timeout = setTimeout(later, wait)
+			    if (callNow) {
+			      result = func.apply(context, args)
+			      context = args = null
+			    }
+			    return result
+			  }
+			}
+			
+			
+			/*
+			 节流 在规定时间内只执行一次，n次触发当前事件，但是时间仍为wait后请求(immediate=false)或再次请求(immediate=true)
+				  时间取决于wait
+			 适用于拖拽、缩放
+			 
+			 Dom绑定（多个onclick执行第一个）， 脚本绑定（多个onclick执行最后一个）， addEventListener（按顺序执行
+			 
+			*/
+		   
+			// 按时间戳作为唯一标识，第一次执行, 存在问题最后一次不执行
+			function throttle1(func, wait) {
+				let result, previous =0
+				return function(...args){
+					let context = this
+					// 预防Dom直接绑定，找不到this,要传入this
+					// if(this == window) {
+					// 	context = args[0]
+					// 	args = args.slice(1)
+					// }
+					
+					let now = +new Date()
+					if(now - previous > wait){
+						previous = now
+						func.apply(context, args)
+					}
+				}
+			}
+			
+			let mousemove1 = throttle1(function(){
+				console.log(111)
+			},1000)
+			
+			// 利用setTimeout 存在问题第一次不执行
+			function throttle2(func, wait) {
+				let result, timeout = null
+				return function(...args){
+					let context = this
+					// 预防Dom直接绑定，找不到this,要传入this
+					// if(this == window) {
+					// 	context = args[0]
+					// 	args = args.slice(1)
+					// }
+					if(!timeout){
+						timeout = setTimeout(function(){
+							timeout = null
+							func.apply(context, args)
+						},wait)
+					}
+				}
+			}
+			
+			// 完整版
+			function throttle3(fn, delay) {
+			  let prevTime = 0
+			  let timer
+			  return function(...args) {
+			    const now = Date.now()
+			    const remaining = delay - (now - prevTime);
+			    // 如果第二次执行超过delay了就立即执行
+			    // remaining > wait是为了处理修改了系统时间的情况
+			    // 比如把当前系统时间往过去调了十分钟，那么now其实是比prevTime小的
+			    // 那么remaning就可能是一个比较大的数了
+			    if (remaining > 0 || remaining > delay) {
+			      if (timer) {
+			        clearTimeout(timer)
+			        timer = null
+			      }
+				  console.log(111)
+			      fn.apply(this, args)
+			      prevTimer = now
+			    } else if (!timer) {
+			      // 这里就是为了处理1.5s停止触发的情况
+			      // 以1.5s为例，delay为1s，这个时候我们设置一个定时器
+			      // 让它在0.5s后执行
+			      // 这样在整个过程中，就是第0s, 第1s，第2s分别执行一次，共三次
+			      // 虽然我们是1.5s就停止触发了
+			      // 这样就保证了最后一次动作一直可以执行
+			      timer = setTimeout(() => {
+			        fn.apply(this, args)
+			        timer = null
+			        prevTime = Date.now()
+			      }, remaining)
+			    }
+			  }
+			}
+			
+			
+			
+			
+			// 完整简化版 时间戳+定时器
+			function throttle4(func,delay) {
+				 var timer = null;     
+				var startTime = 0; 
+				// 不是function直接return
+				if (typeof func !== 'function') {
+					throw new TypeError('Expected a function');
+				}
+				return function() {             
+					var curTime = Date.now();             
+					var remaining = delay - (curTime - startTime);             
+					var context = this;             
+					var args = arguments;
+					// remaining > delay 为了防止修改时间
+					if (remaining < 0 || remaining>delay) {
+						if(timer) {
+							clearTimeout(timer)
+							timer = null
+						}
+						func.apply(context, args);
+						console.log(2222)
+						startTime = curTime;              
+					}  else if(!timer){
+						timer = setTimeout(function(){
+							timer = null
+							console.log(3333)
+							startTime = Date.now()
+							func.apply(context, args)
+						},remaining)         
+					}      
+				}
+			}
+			
+			
+			function throttle5(fn, wait) {
+			    let timer;
+			    let previous = 0;
+			    let throttled = function () {
+			        let now = +new Date();
+			        // remaining 不触发下一次函数的剩余时间
+			        let remaining = wait - (now - previous);
+			        if (remaining < 0) {
+			            if (timer) {
+			                clearTimeout(timer);
+			                timer = null;
+			            }
+			            previous = now;
+			            fn.apply(this, arguments)
+			        } else if (!timer) {
+			            timer = setTimeout(() => {
+			                previous = new Date().getTime();
+			                timer = null;
+			                fn.apply(this, arguments);
+			            }, remaining);
+			        }
+			    }
+			    return throttled;
+			}
+			
+			function throttle6(fn, wait, options = {}) {
+			    let timer;
+			    let previous = 0;
+			    let throttled = function () {
+			        let now = +new Date();
+			        // remaining 不触发下一次函数的剩余时间
+			        if (!previous && options.leading === false) previous = now;
+			        let remaining = wait - (now - previous);
+			        if (remaining < 0) {
+			            if (timer) {
+			                clearTimeout(timer);
+			                timer = null;
+			            }
+			            previous = now;
+			            fn.apply(this, arguments)
+			        } else if (!timer && options.trailing !== false) {
+			            timer = setTimeout(() => {
+			                previous = options.leading === false ? 0 : new Date().getTime();
+			                timer = null;
+			                fn.apply(this, arguments);
+			            }, remaining);
+			        }
+			    }
+			    return throttled;
+			}
+
+
+			
+			
+			
+			let mousemove2 = throttle4(function(){
+				console.log(111)
+			},2000)
+			
+			document.getElementById('input3').oninput = debounce(function(e){
+				console.log(e)
+			},500)
+			
+			function throttle(func, wait, immediate = true) {
+				let result, timeout = null, previous =0
+				return function(...args){
+					let context = this
+					if(immediate) {
+						let now = +new Date()
+						if(now - previous > wait){
+							previous = now
+							func.apply(context, args)
+						}
+					}else {
+						if(!timeout){
+							timeout = setTimeout(function(){
+								timeout = null
+								func.apply(context, args)
+							},wait)
+						}
+					}
+				}
+			}
+			
+			console.log('1234567'.replace(/\B(?=(\d{3})+$)/g,','))
+			
+			console.log('kua-jie-fang-shi'.replace(/(^(\w)|-(\w))/g, (m,c)=>c.toUpperCase()))
+			
+			
+			
+			
+		</script>
+	</body>
+</html>

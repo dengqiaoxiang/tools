@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>timer的特征与注意事项</title>
+	</head>
+	<body>
+		<h3>timer的形式</h3>
+		<ul>
+			<li>
+				<h4>setInterval/setTimeout(func/code,delay,arg1, arg2, ...)</h4>
+			</li>
+		</ul>
+		
+		<h3>含义</h3>
+		<ul>
+			<li>
+				<h4>func 执行函数对象</h4>
+			</li>
+			<li>
+				<h4>code以字符串的形式, 通过eval解析后, 执行函数对象</h4>
+			</li>
+			<li>
+				<h4>delay 延迟时间 默认为10ms, 小于10ms的, 按10ms执行</h4>
+			</li>
+			<li>
+				<h4>age1 作为参数传入func的是实参中</h4>
+			</li>
+		</ul>
+		
+		<h3>返回值</h3>
+		
+		<ul>
+			<li>
+				<h4>intervalId/timeoutId为非0数值,用来标识由interval/timeout生成的计时器，用clear进行清除对应id, 回收需指定为null</h4>
+			</li>
+		</ul>
+		
+		<h3>注意点</h3>
+		<ul>
+			<li>
+				<h4>interval&timeout共用一个id池</h4>
+			</li>
+			<li>
+				<h4>interval&timeout要及时清除，否则造成内存泄漏</h4>
+			</li>
+			<li>
+				<h4>interval存在延迟</h4>
+			</li>
+			<li>
+				<h4>code传入的是函数</h4>
+			</li>
+			<li>
+				<h4>
+					this的指向问题，在函数对象与字符串（code）下的this是不同
+					函数对象下执行指向当前对象 this -> object， 而字符串（code）下执行会被提升到全局 this ->window
+				</h4>
+			</li>
+		</ul>
+		
+		<script>
+			var i = 0;
+			const o = {
+			    i: 1,
+			    fn: function(){
+			        console.log(this.i);
+			    }
+			}
+			setTimeout(o.fn(), 1000); //0
+		</script>
+		
+		
+	</body>
+</html>

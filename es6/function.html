@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>测试 function</title>
+	</head>
+	<body>
+		
+	</body>
+	<script type="text/javascript">
+		// 1、默认值
+		function defaultValue(x=0,y){
+			console.log(x,y)
+		}
+		defaultValue()
+		// 2、解构与默认值结合
+		function deconstruction({x,y=0}){
+			console.log(x,y)
+		}
+		deconstruction({})
+		/* 
+			deconstruction() 报错 找不到 TypeError: cannot read property 'x' of undefined
+			正确的做法是 deconstruction({x,y=0} = {}) 即提供默认值
+		*/
+		let obj = {a:1}, obj1 = {b:2} // 对象会自动转为字符串
+		const myObject = {};
+		myObject[obj] = obj
+		console.log(myObject)
+		
+		/*
+			方法的 name 属性， 对象方法也是函数，因此可以返回函数名，但是利用getter和setter一个函数，哪么name属性不在函数上，
+			而是在get、set属性上，返回值是在方法名加上get、set
+		*/
+		let objName =  {
+			sayHello(){
+				
+			}
+		}
+		let objGetSet =  {
+			get foo(){
+				
+			},
+			set foo(x){
+				
+			}
+		}
+		console.log(objName.sayHello.name)
+		const descriptor = Object.getOwnPropertyDescriptor(objGetSet, 'foo');
+		console.log(descriptor,descriptor.get.name);
+		// 特殊情况 构造函数返回anonymous、bind返回bound+函数名
+		
+		/*
+			属性的可枚举性和遍历，对象的每一个属性都有描述对象（descriptor{value:11,enumerable: true,writable: true,configurable:true} 
+			通过 Object.getOwnPropertyDescriptor(obj，propertyName)获取
+		*/
+	   
+		/*
+			enumerable: false, 有四种情况受到影响 for in、Object.keys()、JSON.stringify()、Object.assign()
+			ES6 有5种可以遍历对象的属性
+			for in 所有可枚举自身和可继承的属性
+			Object.keys(obj) 所有可枚举自身的属性
+			Object.getOwnPropertyNames(obj) 所有但不包括Symbol自身的属性
+			Object.getOwnPropertySymbols(obj) 所有自身Symbol的属性
+		*/
+	   
+	   /*
+		this关键字总是指向函数所在的当前对象，super关键字指向当前对象的原型对象。
+	   */
+	   const proto = {
+	     foo: 'hello',
+		 foo1(){
+			 console.log(this.foo)
+		 }
+	   };
+	   
+	   const objSuper = {
+	     foo: 'world',
+	     find(){
+	       return super.foo;
+	     }
+	   };
+	   
+	   Object.setPrototypeOf(objSuper, proto);
+	   console.log(objSuper.find()) // "hello"
+	   console.log(objSuper.foo1()) // this指向当前对象，super指向当前对象的原型对象
+	   // 注意：supper关键字表示原型对象，只能用于对象的方法中，用于其他地方会报错
+	   /*
+		const objSuper = {foo: super.foo};
+		const objSuper = {foo:()=> super.foo};  // 在对象中使用箭头函数，this的指向将会有问题
+		const objSuper = {foo:function(){return super.foo}}; super不支持 目前，只有方法的简写可以让 JavaScript 引擎确认，定义的是对象的方法。
+	   */
+	  
+	  /*
+	   扩展运算符 注意：null、undefined不可以解构，扩展运算符只能放在最后。扩展运算符的拷贝只是浅拷贝,还是引用地址。扩展运算符不能复制对象原型。
+	   扩展运算符后面必须为一个变量，而不是表达式。扩展运算符可以用于代替arguments
+	  */
+	  let copyObj =  { a: { b: 1 } }
+	  let {...copyObjx} = copyObj // 只是拷贝对象的属性
+	  copyObjx.a.b = 2
+	  console.log(copyObj.a.b)
+	  // 完整拷贝对象
+	  const clone = Object.assign(
+		Object.create(Object.getPrototypeOf(copyObj)),
+		copyObj
+	  )
+	  
+	  /*
+	   链运算符 ?.  如判断message.body.user.firstName 的存在， 
+			es5 message && message.body && message.body.user && message.body.user.firstName
+			es6 message?.body?.user?.firstName
+			?.运算符，直接在链式调用的时候判断，左侧的对象是否为null或undefined。如果是的，就不再往下运算，而是返回undefined。
+			链判断运算符有三种 1、?.prop 2、?.[expr] 3、func?.(...args) // 函数或对象方法的调用
+	  */
+	 let message = {
+		 body:{
+			 user: {
+				 
+			 }
+		 }
+	 }
+	 console.log(message?.body?.user?.firstName)
+	 let hex = "#C0FFEE".match(/#([A-Z]+)/i)?.[1]
+	 console.log(hex)
+	 /*
+		上面代码中，特别注意后两种形式，如果a?.b()里面的a.b不是函数，不可调用，那么a?.b()是会报错的。a?.()也是如此，如果a不是null或undefined，但也不是函数，那么a?.()会报错。
+	 */
+	 let a = {
+		 b(){console.log(111)}
+		} 
+	 a?.b()
+	 
+	 /*
+	  null 判断运算符  ?? 主要原因是 || 参数在传入空字符串或者0或者false都会取后者的值, 而??只有前者为null或者undefined才能执行后者
+	  &&、|| 与??并行要括号括起来
+	 */
+	 let nullRule = a?.c ?? 111
+	 console.log(nullRule)
+	 
+	 // object 新增方法 Object.is()
+	 /*
+		ES5 比较两个值是否相等，只有两个运算符：相等运算符（==）和严格相等运算符（===）。它们都有缺点，前者会自动转换数据类型，后者的NaN不等于自身，以及+0等于-0
+		ES6 采用（同值相等）算法，
+	 */
+	 console.log(Object.is(+0,-0),Object.is(NaN,NaN))
+	 // ES5 部署Object.is
+	 Object.defineProperty(Object,'is',{
+		value: function(){
+			
+		},
+		writable: true,
+		enumerable: false,
+		configure: true
+	 })
+	 
+	 /*
+	  Object.assign() 只列举可枚举的
+	  1、本身等于本身Object.assign(obj) = obj 
+	  2、null，、undefined无法转成对象，会直接报错 Object.assign(undefined) // 报错
+	  3、处理数组，按照对象来处理 Object.assign([1, 2, 3], [4, 5]) => [4,5,3]
+	  4、取值函数的处理 Object.assign()只能进行值的复制，如果要复制的值是一个取值函数，那么将求值后再复制。
+	 */
+	 
+	 // Object.assign()常见用途 
+	 // 1、为对象添加属性
+	 class Point{
+		constructor(x,y){
+			// this.x = x;
+			// this.y = y
+			Object.assign(this, {x, y});
+		}
+	 }
+	 // 2、为对象添加方法
+	 Object.assign(Point.prototype,{
+		someMethod() {
+			console.log(111)
+		},
+	 })
+	 // Point.prototype.someMethod = function(){console.log(111)}
+	 
+	 // 3、克隆对象
+	 let readyObj = {
+		 a: 1,
+		 b: {
+			 c: 1
+		 }
+	 }
+	 function clone2(origin) { // 这种只是拿到自身的属性值、只是copy第一层
+	   return Object.assign({}, origin);
+	 }
+	 // function clone3(origin) { // 保持继承链
+	 //   Object.assign(
+		// 	Object.create(Object.setPrototypeOf(origin)),
+		// 	origin
+		// )
+	 // }
+	 function clone3(origin) { // 保持继承链
+	   let originProto = Object.getPrototypeOf(origin);
+	   return Object.assign(Object.create(originProto), origin);
+	 }
+	 
+	 let cloneObj = clone2(readyObj)
+	 cloneObj.a = 2
+	 cloneObj.b.c = 2
+	 console.log(cloneObj.a,readyObj.a,cloneObj.b.c,readyObj.b.c)
+	 
+	 let clone3Obj = clone3(readyObj)
+	 clone3Obj.a = 2
+	 clone3Obj.b.c = 3
+	 console.log(clone3Obj.a,readyObj.a,clone3Obj.b.c,readyObj.b.c)
+	 
+	 /*
+		Object.getOwnPropertyDescriptor(obj,key)
+		Object.getOwnPropertyDescriptors(obj) 
+		用于解决assign无法获取get、set（背后的赋值方法或取值方法。）
+	 */
+	 const shallowMerge = (target, source) => Object.defineProperties(
+	   target,
+	   Object.getOwnPropertyDescriptors(source)
+	 );
+	 
+	 let clone4Obj = shallowMerge(readyObj)
+	 clone4Obj.a = 3
+	 clone4Obj.b.c = 4
+	 console.log(clone3Obj.a,readyObj.a,clone3Obj.b.c,readyObj.b.c)
+	</script>
+</html>

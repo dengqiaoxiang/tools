@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script>
+			console.time()
+			let obj = {a:222,b:22}
+			let arr = new ArrayBuffer(100);
+			var worker=new Worker('worker.js');
+			// worker.postMessage(obj);
+			worker.postMessage(arr, [arr]);
+			worker.onmessage=function(event){
+			    var data=event.data;
+			    console.log(data)
+			};
+			worker.onerror=function(event){
+			    console.log(event.fileName,event.lineo,event.message);
+			}
+			console.log(obj,arr)
+			console.timeEnd()
+			
+		</script>
+	</body>
+</html>

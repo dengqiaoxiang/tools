@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>
+			.test{
+				width: 20%;
+				height: 120px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="test" onclick="test(event)">
+			<div data-id="222">
+				2222
+			</div>
+			<div data-id="111">
+				1111
+			</div>
+		</div>
+		<div class="test" onclick="now(2222,555)">222</div>
+		<input type="text" oninput="Input('11',33)">
+		<p id="p"></p>
+		// html
+		<div id="root">
+			<img class="img" />
+			<div title="div-box">
+				<p>box</p>
+			</div>
+			文本节点
+			<p>22</p>
+		</div>
+		
+		<script type="text/javascript">
+			
+			function debounce(func, wait, immediate){
+				let timeout = null, result
+				return function(...args){
+					let context = this
+					// let args = arguments
+					// let args = Array.prototype.slice.call(arguments)
+					// let args = Array.from(arguments)
+					// let args = [...arguments]
+					timeout && clearTimeout(timeout)
+					if(immediate) {
+						let callNow = !timeout
+						timeout = setTimeout(function() {
+							timeout = null
+						}, wait)
+						if(callNow) result = func.apply(context, args)
+					}else{
+						timeout = setTimeout(function() {
+							func.apply(context, args)
+						}, wait)
+					}
+					return result
+				}
+			}
+			let Input = debounce(function(msg,name){
+				console.log(msg,name)
+			},1000,true)
+			
+			// 在规定时间内，只能触发一次
+			// 按时间戳作为标识
+			function throttle(func, wait) {
+				let previous = 0
+				return function(...args){
+					let now = +new Date()
+					let context = this
+					if(now - previous > wait){
+						func.apply(context, args)
+						previous = now
+					}
+				}
+			}
+			
+			// 使用定时器
+			function throttle1(func, wait) {
+				let timeout = null
+				return function(...args){
+					let context = this
+					timeout && clearTimeout(timeout)
+					timeout = setTimeout(function(){
+						timeout = null
+					},wait)
+					!timeout && func.apply(context, args)
+				}
+			}
+			
+			let now = throttle(function(msg){
+				console.log(msg)
+			},1000)
+		</script>
+
+
+	</body>
+</html>

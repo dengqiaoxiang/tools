@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>延迟执行</title>
+	</head>
+	<body>
+		<script>
+			// Promise
+			let sleep = time => {
+				return  new Promise(resolve =>setTimeout(resolve,time))
+			}
+			sleep(1000).then(()=>{
+			  console.log(1)
+			})
+			
+			// setTimeout
+			function sleep1(func, time){
+				if(typeof func == 'function'){
+					setTimeout(func,time)
+				}
+			}
+			
+			function yideng() {
+			  console.log(1);
+			}
+			let num = 1
+			(function () {
+			  if (false) {
+			    function yideng() {
+			      console.log(2);
+			    }
+			  }
+			  console.log(typeof yideng);
+			  yideng();
+			})();
+			
+		</script>
+		
+	</body>
+</html>

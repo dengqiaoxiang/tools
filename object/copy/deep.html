@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>deep copy</title>
+	</head>
+	<body>
+		<h2>features</h2>
+		
+		<h4>深拷贝所有层</h4>
+		
+		<h2>methods</h2>
+		
+		<h4>
+			递归遍历所有层级<br>
+			利用JSON对象JSON.stringfy() JSON.parse()<br>
+			通过jQuery的extend方法实现深拷贝 <br>
+			lodash函数库实现深拷贝<br>
+		</h4>
+		
+		<script>
+			
+			// 递归遍历所有层级
+			function deepClone(source) {
+				if(source && typeof source !== 'object') {
+					throw new Error('error arguments', 'deepClone')
+				}
+				let originObj = source.constructor == Array ? [] : {}
+				Object.keys(source).forEach(key => {
+					if(source[key] && typeof source[key] == 'object'){
+						originObj[key] = deepClone(source[key])
+					}else{
+						originObj[key] = source[key]
+					}
+				})
+				return originObj
+			}
+			
+			let obj = {
+				a: 1,
+				b: {
+					c: 2,
+					d: {
+						f: 2
+					}
+				},
+				c: undefined,
+				d: function(){}
+			}
+			
+			let obj1 = deepClone(obj)
+			obj1.b.c = 3
+			console.log(obj,obj1)
+			
+			// JSON 乞丐式拷贝 无法拷贝undefined、function 若为undefined/function会删除当前key
+			let obj2 = JSON.parse(JSON.stringify(obj))
+			obj2.b.c = 4
+			console.log(obj,obj2)
+			
+		</script>
+		
+		
+	</body>
+</html>

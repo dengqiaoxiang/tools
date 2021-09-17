@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>scope</title>
+	</head>
+	<body>
+		
+		<a href="https://www.cnblogs.com/fundebug/p/10535230.html" target="_blank">参考</a>
+		
+		<h2>What is scope？</h2>
+		<h4>
+			作用域指的是变量、函数、对象在代码中的适用范围/可访问性
+		</h4>
+		
+		<h2>scope的类型</h2>
+		<h4>
+			全局作用域/函数作用域/块级作用域<br>
+			注意：块语句 {}，即if swich for 这些是不会形成新的作用域，除非加块级作用域let/const
+		</h4>
+		
+		<h2>特征</h2>
+		<h4>
+			内部作用域可以访问外部作用域，反之则不行
+		</h4>
+		
+		<h2>自由变量</h2>
+		<h4>
+			在当前作用域没有定义该变量，该变量称之为自由变量
+		</h4>
+		
+		<h2>作用域链</h2>
+		<h4>
+			当前作用域没有该变量，会一层一层向上寻找，以此类推，形成作用域连
+		</h4>
+		
+		<h2>自由变量的取值</h2>
+		<h4>
+			要到创建这个函数的当前作用域中寻找，强调的是创建，而不是调用
+		</h4>
+		
+		<h2>作用域与执行上下文（this）</h2>
+		<h4>
+			javascript是解析性语言，js分为解析、执行两个阶段，两个阶段做的事情是不一样的<br>
+			解析阶段：词法分析、语法分析、作用域确定<br>
+			执行阶段：创建执行上下文、执行函数代码、垃圾回收<br>
+			执行上下文在运行时确定，随时可能改变；作用域在定义时就确定，并且不会改变。
+		</h4>
+		
+		<script>
+			var data = {a: 1}
+			var data = {b: 2}
+			
+			// 自由变量的取值
+			var x = 10
+			function fn() {
+			  console.log(x)
+			}
+			function show(f) {
+			  var x = 20;
+			  (function() {
+			    f() //10，而不是20
+			  })()
+			}
+			show(fn)
+			
+			var a = 10
+			function fn() {
+			  var b = 20
+			  function bar() {
+			    console.log(a + b) //30
+			  }
+			  return bar
+			}
+			var x = fn(),
+			  b = 200
+			x() //bar()
+			
+		</script>
+	</body>
+</html>

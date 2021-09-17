@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>单例模式</title>
+	</head>
+	<body>
+		
+		<h3>单例模式：一个类仅有一个实例， 并提供一个访问他的全局访问点</h3>
+		
+		<ul>
+			<li><p>111</p></li>
+			<li><p>222</p></li>
+			<li><p>333</p></li>
+		</ul>
+		
+		<script>
+			
+			// es6
+			class SingleManage {
+			    constructor({ name, level }) {
+			        if (!SingleManage.instance) {
+			            this.name = name;
+			            this.level = level
+			            SingleManage.instance = this;
+			        }
+			        return SingleManage.instance
+			    }
+			}
+			
+			let boss = new SingleManage({name:"Jokul", level:"1"})
+			let boss2 = new SingleManage({name:"Jokul2", level:"2"})
+			console.log(boss === boss2)
+			
+			// es5
+			/*
+			function SingleManage(manage) {
+			    this.name = manage.name
+			    this.level = manage.level
+			    this.info = function () {
+			        console.warn("Boss's name is " + this.name + " and level is " + this.level)
+			    }
+			}
+			SingleManage.getInstance = function (manage) {
+			    if (!this.instance) {
+			        this.instance = new SingleManage(manage)
+			    }
+			    return this.instance
+			}
+			var boss = SingleManage.getInstance({ name: "Jokul", level: "1" })
+			var boss2 = SingleManage.getInstance({ name: "Jokul2", level: "2" })
+			boss.info()
+			boss2.info()
+			*/
+		   
+		   // 应用实例
+		   
+		   // 实现一个storage
+		   // 构造函数/类
+		   function StorageBase() {}
+		   StorageBase.prototype.setItem = function(key, value) {
+			   return localStorage.setItem(key,value)
+		   }
+		   StorageBase.prototype.getItem = function(key) {
+				return localStorage.getItem(key)
+		   }
+		   
+		   const Storage = (function(){
+			   let instance = null
+			   return function(){
+				   if(!instance) instance = new StorageBase()
+				   return instance
+			   }
+		   })()
+		   
+		   
+		   let Storage1 = new Storage()
+		   Storage1.setItem('name', '看看')
+		   
+		   
+		   
+		</script>
+	</body>
+</html>

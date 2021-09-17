@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>bubble sort</title>
+	</head>
+	<body>
+		<a href="https://blog.csdn.net/qq_38845858/article/details/93890367">bubble sort</a>
+		<h2>冒泡排序算法的原理如下：</h2>
+		<ul>
+			<li>比较相邻的元素。如果满足条件，就交换他们两个。</li>
+			<li>对每一对相邻元素做同样的工作，从开始第一对到结尾的最后一对</li>
+			<li>每轮确定一个元素，每轮下来减少一次</li>
+		</ul>
+		
+		<h2>迅速交互两个值</h2>
+		<ul>
+			<li>借助第三变量</li>
+			<li>^</li>
+			<li>解构</li>
+		</ul>
+		
+		<script>
+			// 第1轮 5次 第2轮 4次 第3轮 3次 第4轮 2次 第5轮 0次
+			let arr = [10,2,5,12,25,0]
+			let len = arr.length
+			for(let i=0;i<len-1;i++){ //轮
+				for(let j=0;j<len-1-i;j++){ //次
+					if(arr[j] > arr[j+1]){
+						// let temp = arr[j];
+						// arr[j] = arr[j+1];
+						// arr[j+1] = temp
+						// arr[j] ^= arr[j+1];
+						// arr[j+1] ^= arr[j]
+						// arr[j] ^= arr[j+1];
+						[arr[j],arr[j+1]] = [arr[j+1],arr[j]]
+					}
+				}
+				
+			}
+			console.log(arr)
+		</script>
+	</body>
+</html>

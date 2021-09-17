@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script>
+			
+			/*
+				1、创建一个空对象 {}
+				2、链接当前对象与另一个对象
+				3、把obj作为func的上下文
+				4、判断result是否为对象或者方法，不是返回obj，是返回result
+			*/
+			function newOperator(func){
+				if(typeof func !== 'function') throw '222 '
+				let args = Array.prototype.slice.call(arguments,1)
+				let obj = {}
+				obj.__proto__ = func.prototype
+				let result = func.apply(obj,args)
+				let isObject = typeof result === 'object' && result != null
+				let isFunction = typeof result === 'function'
+				return isObject || isFunction ? result : obj
+			}
+			
+			function getName(name){
+				this.name = name
+			}
+			
+			let now = newOperator(getName,12)
+			console.log('getName',now)
+			
+			// 写出执行结果
+			
+			console.log('get-element-by-id'.replace(/^\w/g,c=> c.toUpperCase()).replace(/-(\w)/g,(c,m)=> m.toUpperCase()))
+			
+			
+				
+			
+			
+		</script>
+	</body>
+</html>

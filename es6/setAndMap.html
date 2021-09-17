@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title> set and map </title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			console.log({} == {}) // 对象指向地址不一样
+			//  set 几大属性 add has clear delect size
+			
+			//  应用 去掉数组、字符串的重复字段
+			let arr = [1,2,3,4,5,'5',5], arr1 = [2,15,5,3]
+			let unique = []
+			for(let i in arr){
+				// if(unique.indexOf(arr[i]) == -1){
+				if(!unique.includes(arr[i])){
+					unique.push(arr[i])
+				}
+			}
+			console.log(unique)
+			// let unique = [...new Set(arr)] // Array.from(new Set(arr))
+			// 并集、交集、差集
+			
+			let union = [...new Set([...arr,...arr1])]
+			let	intersection = [...new Set(arr.filter(item=>new Set(arr1).has(item)))]
+			let	difference = [...new Set(arr.filter(item=>!new Set(arr1).has(item)))]
+			console.log(union,intersection,difference)
+		</script>
+	</body>
+</html>

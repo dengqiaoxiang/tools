@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>原型链概念</title>
+		<style>
+			.center{
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		
+		<a href="https://www.jianshu.com/p/08c07a953fa0" target="_blank">参考</a>
+		
+		<div class="center">
+			<img src="./concept.webp" alt="">
+		</div>
+		
+		<h2>什么是原型链</h2>
+		
+		<h4>
+			每一个对象都可以有一个__proto__属性,它还可以指向其函数的原型对象(prototype)，以此类推，形成原型链。查找属性时，先在当前对象上查找，
+			若没有则会向对象原型查找，对象原型再向对象原型原型查找，以此类推，最后若没有则返回undefined
+		</h4>
+		
+		<h2>原型指针 __proto__ prototype </h2>
+		
+		<h4>
+			prototype属性是函数独有的，指向一个对象，包含所有实例共享的属性和方法。
+			prototype.constructor指向创建对象的函数本身
+			__proto__在原型链查找中使用，总指向构造函数的原型对象。
+			
+		</h4>
+			
+		<h2>new的本质</h2>
+		
+		<h4>
+			1、创建一个新对象obj
+			2、要实例化对象的原型链指向obj.prototype
+			3、call/apply改变this的指向，即this替换成obj
+			4、返回obj
+		</h4>
+		
+		
+		<script>
+			// 
+			let obj = {
+				a: 22,
+				b(){
+					console.log(this.a)
+				}
+			}
+			let obj1 = { a: 11 }
+			obj.b.call(obj1)
+			
+			
+			console.dir(obj)
+			function name(name,age) {
+				console.log(111)
+			}
+			
+			// 箭头函数不能实例化 没有prototype 没有this 没有argmentss
+			let getName = (name,age) => {
+				this.name = name
+				this.age = age
+			}
+			// let getName1 = new getName('marry',2)
+			console.dir(getName)
+			console.log(name.__proto__ === Function.prototype)
+			
+			// 所有的实例对象都可以访问constructor属性。
+			let name1 = new name()
+			let name2 = new name1.constructor()
+			console.log(name2 instanceof name)  // name2.
+			console.log(name2 == name1)
+			
+			
+			function NEW(func,...args){
+				// es5
+				// var obj = {}
+				// obj.__proto__ = func.prototype
+				// es6
+				let obj = Object.create(func.prototype)
+				func.call(obj,...args)
+				return obj
+			}
+			
+			console.log(new name(),NEW(name))
+			
+			
+			
+			
+		</script>
+	</body>
+</html>

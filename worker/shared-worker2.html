@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script>
+			let work = new SharedWorker('./sharedWorker.js')
+			work.port.start();
+			work.port.postMessage('我是shared-worker2')
+			work.port.onmessage = function(event){
+				console.log(event)
+			}
+		</script>
+	</body>
+</html>

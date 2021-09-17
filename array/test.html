@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script>
+			// es6
+			class Subject {
+			    constructor() {
+			        this.state = 0;
+			        this.observers = []
+			    }
+			    getState() {
+			        return this.state
+			    }
+			    setState(state) {
+			        this.state = state;
+			        this.notify();
+			    }
+			    notify() {
+			        this.observers.forEach(observer => {
+			            observer.update()
+			        })
+			    }
+			    add(observer) {
+			        this.observers.push(observer)
+			    }
+			}
+			
+			class Observer {
+			    constructor(name, subject) {
+			        this.name = name;
+			        this.subject = subject;
+			        this.subject.add(this)
+			    }
+			    update() {
+			        console.warn(`${this.name} 被更新，状态为${this.subject.getState()}`)
+			    }
+			}
+			
+			let sub = new Subject();
+			let ob = new Observer("ob", sub); 
+			
+			sub.setState(1)
+			
+			// es5
+			var Subject = function () {
+			    this.state = 0;
+			    this.observers = []
+			}
+			Subject.prototype.getState = function () {
+			    return this.state
+			}
+			Subject.prototype.setState = function (state) {
+			    this.state = state;
+			    this.notify();
+			}
+			Subject.prototype.notify = function () {
+			    this.observers.forEach(observer => {
+			        observer.update()
+			    })
+			}
+			Subject.prototype.add = function (observer) {
+			    this.observers.push(observer)
+			}
+			var Observer = function (name, subject) {
+			    this.name = name;
+			    this.subject = subject;
+			    this.subject.add(this)
+			}
+			Observer.prototype.update = function () {
+			    console.warn(`${this.name} 被更新，状态为${this.subject.getState()}`)
+			}
+			var sub = new Subject();
+			var ob = new Observer("ob", sub);
+			
+			sub.setState(1)
+			
+		</script>
+	</body>
+</html>

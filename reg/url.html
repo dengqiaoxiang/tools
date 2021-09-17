@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<ui>
+			<li class="test1">111</li>
+			<li class="test2">222</li>
+			<li class="test3">333</li>
+		</ui>
+		<script>
+			function getParams(url,name) {
+				let search = decodeURIComponent(url).split('?')[1]
+				// let obj = search.split('&').reduce((pre,next)=>{
+				// 	let [key,value] = next.split('=')
+				// 	return pre[key] = value
+				// },{})
+				let obj = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}')
+				console.log(obj)
+				return name?obj[name]:obj
+			}
+			
+			getParams('https://www.baidu.com/s?ie=UTF-8&wd=%E5%8E%8B%E7%BC%A9')
+			
+			let getData = debounce(function(e){
+				console.log(e.target)
+			},1000)
+			 
+			
+		</script>
+	</body>
+</html>

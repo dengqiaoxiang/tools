@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>insertion sort</title>
+	</head>
+	<body>
+		<a href="https://www.cnblogs.com/onepixel/articles/7674659.html">insertion sort</a>
+		<script>
+			// 原理 通过构建有序排序，对未排序数据，在已排序序列中从后往前扫描，找到相对应位置插入
+			
+			// 描述
+			/*
+				从第一个元素开始，该元素可以认为已经被排序；
+				取出下一个元素，在已经排序的元素序列中从后向前扫描；
+				如果该元素（已排序）大于新元素，将该元素移到下一位置；
+				重复步骤3，直到找到已排序的元素小于或者等于新元素的位置；
+				将新元素插入到该位置后；
+				重复步骤2~5。
+			*/
+			
+			
+			function Insertion(arr) {
+			  let len = arr.length;
+			  let preIndex, current;
+			  for (let i = 1; i < len; i++) {
+			    preIndex = i - 1;
+			    current = arr[i];
+			    while (preIndex >= 0 && current < arr[preIndex]) {
+			      arr[preIndex + 1] = arr[preIndex];
+			      preIndex--;
+			    }
+			    arr[preIndex + 1] = current;
+			  }
+			  return arr;
+			}
+			
+			var arr = [3,5,7,1,4,56,12,78,25,0,9,8,42,37];
+			console.log(Insertion(arr));
+		</script>
+	</body>
+</html>

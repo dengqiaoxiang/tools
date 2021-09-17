@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		
+		<h2>interval每执行一次都会往后延期10ms-60ms导致不准确</h2>
+		<h3 style="color: red;">用setTimeout代替setInterval</h3>
+	
+		<script>
+			function _interval(func,wait) {
+				let context = this // 闭包形式 保存context
+				let args = Array.prototype.slice.call(arguments,2)
+				function interval(){
+					setTimeout(function(){
+						func.apply(context,args)
+						interval()
+					},wait)
+				}
+				interval()
+			}
+			
+			_interval(function(){
+				console.log(222)
+			},2000)
+			
+				
+			// Observer与Subject相互引用
+			class Observer {
+				constructor(name, subject) {
+					this.name = name
+					this.subject = subject
+					this.subject.add(this)
+				}
+				update() {
+					console.warn(`${this.name} 被更新，状态为${this.subject.getState()}`)
+				}
+			}
+			
+			class Subject {
+				constructor() {
+					this.state = 0
+					this.observers = []
+				}
+				getState() {
+					return this.state
+				}
+				setState(state) {
+					this.state = state
+					this.notify()
+				}
+				notify() {
+					this.observers.forEach(observer => observer.update() )
+				}
+				add(observer) {
+					this.observers.push(observer)
+				}
+			}
+			let subject = new Subject()
+			let observer = new Observer('obj', subject)
+			subject.setState(2)
+			
+			
+			
+			
+			
+			
+		</script>
+	</body>
+</html>

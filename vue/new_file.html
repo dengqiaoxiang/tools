@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<h2>
+			v-show 始终绑定在DOM上， 只是简单切换css的display
+			v-show不支持template，不支持v-else
+			v-if条件渲染 支持template，支持v-else，销毁和重建
+			v-if是惰性的，条件为假的时候不渲染，直到为真时才会渲染
+			v-if 有更高的切换开销，而 v-show 有更高的初始渲染开销
+			v-for的优先级比v-if高
+		</h2>
+		<h2>
+			对象法 :class="{active: activeIndex==i}"
+			数组法 :class="['active','activeIndex']"
+			数组对象法 :class="[{active: activeIndex==i},'index']"
+			组件上也一样
+			行内 :style="''"
+		</h2>
+		
+		<h2>
+			computed 计算属性  methods 方法 watch 监听属性
+			computed: {
+				name: {
+					get(){
+						return this
+					},
+					set(newVal){
+						return newVal
+					}
+				}
+			}
+			computed是根据依赖进行缓存，只有依赖发生变化才会重新计算求值，即依赖没有变化时computed不经计算直接返回computed
+			但是computed不可以传参
+			methods没有依赖关系，每次调用都会重新计算，可以传参
+			
+			methods: {
+				name(){
+					return this
+				}
+			}
+			
+			watch 用于自定义属性/异步/开销较大时
+			watch: {
+				firstName(){
+					this.fullName = val + ' ' + this.lastName
+				}
+			}
+			
+			computed计算属性最好在data不存在，存在的话按computed
+			watch data的必须存在相对应的属性
+			
+		</h2>
+		
+		
+		<h2>
+			v-for  循环对象/数组
+			item 值
+			name 键
+			index 下标
+			v-for="(item,index) in Array" 循环数组时有两个参数 item index
+			v-for="(item,name,index) in Object" 循环数组时有三个参数 item name index
+			
+			
+			<!-- 维护状态 -->
+			当使用v-for更新列表时，他默认使用“就地更新”原则，当数据项的顺序被改变时，vue
+		</h2>
+		
+		
+		<h2>
+			
+			.stop  e.stopPropagation()
+			.prevent e.preventDefault()
+			.self 当前元素触发,内部元素不触发
+			.passive scroll事件
+			.once 执行一次
+			.capture 先由此触发再到内部元素
+			
+			<!-- 键盘事件 -->
+			.keydown enter (13)/right/up/page-down/esc/space
+			.keyup enter (13)/right/up/page-down/esc/space
+			
+			<!-- 系统事件 -->
+			.ctrl
+			.shift
+			.alt
+			.meta
+			
+			<!-- 鼠标事件 -->
+			.right
+			.left
+			.middle
+			
+		</h2>
+		<!--  -->
+		
+		
+		<!-- v-model -->
+		<h2>
+			input textarea select 会根据控件类型自动选取正确的方法来更新元素。本质上是v-model语法糖
+			v-model会忽略input textarea select的初始值，是有vue的实例数据作为数据源
+			v-model语法糖 v-model='name' => :value="name" @input="name=$event.target.value"
+			本质： v-model='name' model:{prop: input}, props: ['value'] 
+			
+			text 和 textarea 元素使用 value property 和 input 事件；
+			checkbox&radio 元素使用 checked property和 change事件
+			select 字段将 value 作为 prop 并将 change 作为事件
+			
+
+			
+			select option value不赋值，则直接采用option text作为value
+		</h2>
+		
+	</body>
+</html>

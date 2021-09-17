@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Proxy</title>
+	</head>
+	<body>
+		<h1>Proxy 的特征</h1>
+		<h2>
+			Proxy简绍 Proxy用于修改某些操作的默认行为(即对编程语言进行编程)， 可以理解成，在目标对象之前架设一层“拦截”，
+			外界对该对象的访问，都必须先通过这层拦截，因此提供了一种机制，可以对外界的访问进行过滤和改写。
+		</h2>
+		<script>
+			var  obj = new Proxy({}, {
+				 get: function (target, propKey, receiver) {
+					console.log(`getting ${propKey}!`);
+					return Reflect.get(target, propKey, receiver);
+				  },
+				  set: function (target, propKey, value, receiver) {
+					console.log(`setting ${propKey}!`);
+					return Reflect.set(target, propKey, value, receiver);
+				  }
+			})
+			obj.count = 1;
+			++obj.count
+			console.log(obj.count)
+			// target 代理对象，propkey 配置对象
+			var proxy = new Proxy({}, {
+			  get: function(target, propKey) {
+			    return 35;
+			  }
+			});
+			console.log(proxy.time,proxy.name,proxy.title)
+		</script>
+		
+	</body>
+</html>

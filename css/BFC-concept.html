@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+	</body>
+</html>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>BFC</title>
+		<style>
+			.h2,.h3{
+				margin: 30px 0;
+				overflow: hidden;
+			}
+			.overflow{
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>what?</h2>
+		<p>
+			BFC(block formatting context)-块级格式化上下文，就是页面隔离的独立容器
+		</p>
+		<h2>rules</h2>
+		<ul>
+			<li>内部的box会在垂直方向一个接一个的放置</li>
+			<li>属于同一个BFC的两个相邻的box的margin会重叠，不同box则不会，关键给父级overflow:hidden</li>
+			<li>是页面上隔离的独立容器，里面的元素不会影响到外面的元素</li>
+			<li>计算BFC高度，浮动元素也参与计算</li>
+		</ul>
+		
+		<h2>触发条件</h2>
+		
+		<ul>
+			<li>body根元素</li>
+			<li>float不为none</li>
+			<li>绝对定位position为absolute、fixed</li>
+			<li>display为inline-block、table-cells、flex </li>
+			<li>overflow不为visible</li>
+		</ul>
+		<div class="overflow">
+			<h2 class="h2">22</h2>
+		</div>
+		<div class="overflow">
+			<h2 class="h3">33</h2>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>recursion</title>
+	</head>
+	<body>
+		
+		<h2>what is recursion?</h2>
+		<h4>
+			递归本质上是将原来问题转化为更小的同一问题，简单来说一个函数不断调用自己
+		</h4>
+		
+		<h2>递归三要素 边界条件、递归前进、递归返回</h2>
+		<h4>
+			1、一个问题的解可以分解为几个更小的同一题的解<br>
+			2、分解后的子问题只存在数据不一样的问题<br>
+			3、终止条件<br>
+		</h4>
+		
+		
+		<h2>递归注意事项/缺点</h2>
+		<h4>
+			1、运行效率较低<br>
+			2、容易堆栈溢出<br>
+			3、警惕递归中的重复计算<br>
+		</h4>
+		
+		
+		<script>
+			/* 
+				1、造成堆栈溢出原因，递归次数过多，不是尾递归
+				解决方法: 限制调用次数、利用缓存计算过的直接返回、改为尾递归(最佳->推荐)、
+			*/ 
+			
+			// 重复计算
+			function fibonacci (n) {
+			  if ( n <= 1 ) {return 1};
+			  return fibonacci(n - 1) + fibonacci(n - 2);
+			}
+			console.log(fibonacci(10))
+			
+			
+			// 利用缓存计算过的直接返回
+			function Fibonacci() {
+				this.obj = {};
+				this.count = 0;
+			}
+			Fibonacci.prototype.getF = function(n) {
+				this.count ++;
+				if ( n <= 1 ) {return 1};
+				if (this.obj.hasOwnProperty(n)) {
+					return this.obj[n];
+				}
+				const ret = this.getF(n - 1) + this.getF(n -2);
+				this.obj[n] = ret;
+				return ret;
+			}
+		
+			var f = new Fibonacci();
+			console.log(f.getF(10));
+			
+			// 改为尾递归
+			function Fibonacci2 (n , ac1 = 1 , ac2 = 1) {
+			  if( n <= 1 ) {return ac2};
+			
+			  return Fibonacci2 (n - 1, ac2, ac1 + ac2);
+			}
+			console.log(Fibonacci2(10)); // n: 要计算的值
+			
+			let count2 = 0
+			function factorial(n) {
+				count2++;
+				if (n === 1) return 1;
+				 return n * factorial(n - 1);
+			}
+			factorial(5) // 120
+			console.log(count2)
+		</script>
+		
+		
+		
+	</body>
+</html>

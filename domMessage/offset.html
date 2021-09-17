@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>offset</title>
+		
+		<style>
+			.concept{
+				padding: 10px 12px;
+				border: 1px solid #ddd;
+			}
+			.relative{
+				position: relative;
+				padding: 20px;
+				height: 200px;
+			}
+			.relative .concept{
+				position: absolute;
+			}
+		</style>
+	</head>
+	<body>
+		
+		<h3>offset 包括内容、padding、border，且为整数, 不包括伪类</h3>
+		
+		<ul class="concept">
+			<li>offsetWidth: 包括左右padding+左右border</li>
+			<li>offsetHeight: 包括上下padding+上下border</li>
+			<li>offsetLeft: 左边框外边缘到已定位父级的左边框内边缘的距离，没有定位则到body的左边框内边缘的距离</li>
+			<li>offsetTop: 上边框外边缘到已定位父级的上边框内边缘的距离，没有定位则到body的左边框内边缘的距离</li>
+			<li>offsetX: 鼠标事件位置到事件源横向外边缘的距离</li>
+			<li>offsetY: 鼠标事件位置到事件源纵向外边缘的距离</li>
+		</ul>
+		
+		
+		<div class="relative">
+			<ul class="concept">
+				<li>offsetWidth: 包括左右padding+左右border</li>
+				<li>offsetHeight: 包括上下padding+上下border</li>
+				<li>offsetLeft: 左边框外边缘到已定位父级的左边框内边缘的距离，没有定位则到body的左边框内边缘的距离</li>
+				<li>offsetTop: 上边框外边缘到已定位父级的上边框内边缘的距离，没有定位则到body的左边框内边缘的距离</li>
+				<li>offsetX: 鼠标事件位置到事件源横向外边缘的距离</li>
+				<li>offsetY: 鼠标事件位置到事件源纵向外边缘的距离</li>
+			</ul>
+		</div>
+			
+		
+		
+		<script>
+			let concept = document.getElementsByClassName('concept')
+			console.log(concept[0].offsetLeft,concept[0].offsetTop, concept[0].offsetWidth)
+			concept[0].onclick = function(e) {
+				console.log(e.offsetX)
+			}
+			console.log(concept[1].offsetLeft,concept[1].offsetTop, concept[1].offsetWidth)
+			concept[1].onclick = function(e) {
+				console.log(e.offsetX)
+			}
+		</script>
+	</body>
+</html>

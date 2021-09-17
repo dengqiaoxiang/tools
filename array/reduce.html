@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<a href="https://www.cnblogs.com/aidixie/p/12146225.html">222</a>
+		
+		<script>
+			// 求出现次数
+			
+			let str = 'sdksdsdjdssk'
+			let obj = str.split('').reduce(function(prev,cur){
+				if(cur in prev){
+					prev[cur]++
+				}else{
+					prev[cur] = 1
+				}
+				return prev
+			},{})
+			console.log(obj)
+			
+			// 多维数组转一维数组
+			
+			function multiToOne(arr){
+				return arr.reduce((prev,cur)=>{
+					console.log(prev)
+					return prev.concat(Array.isArray(cur)?multiToOne(cur):cur)
+				},[])
+			}
+			let arr = [[1,2],[1,[22,[22]],45]]
+			console.log(multiToOne(arr))
+			
+		</script>
+	</body>
+</html>

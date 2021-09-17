@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>将dom树转为js对象</title>
+	</head>
+	<body>
+		
+		<div class="vnode" id="11">
+			<ul>
+				<li>1111</li>
+				<li>2222</li>
+			</ul>
+			555
+		</div>
+		
+		<script>
+			
+			function VNode(tag, data, value, type) {
+				this.tag = tag && tag.toLowerCase()
+				this.data = data
+				this.value = value
+				this.type = type
+				this.children = []
+			}
+			VNode.prototype.appendChild = function(vnode) {
+				this.children.push(vnode)
+			}
+			
+			function getVNode(node){
+				let nodeType = node.nodeType
+				let _vnode = []
+				if(nodeType === 1){
+					let tag = node.nodeName
+					let value = node.nodeValue
+					let attrs = node.attributes
+					let _data = {}
+					let children = node.childNodes
+					let childLen = children.length
+					for(let i = 0; i < attrs.length; i++){
+						_data[attrs[i].nodeName] = attrs[i].nodeValue
+					}
+					_vnode = new VNode(tag, _data, undefined, nodeType)
+					for(let c = 0; c < childLen; c++){
+						_vnode.appendChild(getVNode(children[c]))
+					}
+				}else if(nodeType === 3) {
+					_vnode = new VNode(undefined, undefined, node.nodeValue, nodeType)
+				}
+				return _vnode
+			}
+			
+			
+			let vnodeDom = document.getElementsByClassName('vnode')[0]
+			let vnode = getVNode(vnodeDom)
+			console.log(vnode)
+			
+			
+		</script>
+	</body>
+</html>

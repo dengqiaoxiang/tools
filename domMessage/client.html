@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>client</title>
+		
+		<style>
+			.concept{
+				width: 200px;
+				padding: 10px 12px;
+				border: 5px solid #ddd;
+			}
+			.concept li{
+				white-space: nowrap;
+			}
+		</style>
+	</head>
+	<body>
+		
+		<h3>client 包括内容、 padding、且为整数</h3>
+		<ul class="concept">
+			<li>clientWidth: 包括内容、左右padding</li>
+			<li>clientHeight: 包括内容、上下padding</li>
+			<li>clientLeft: 指的是左边框的宽度</li>
+			<li>clientTop: 指的是上边框的宽度</li>
+			<li>clientX: 鼠标事件位置相对于浏览器(浏览器的有效区域)左上角x的坐标,不包括滚动条</li>
+			<li>clientY: 鼠标事件位置相对于浏览器(浏览器的有效区域)左上角y的坐标,不包括滚动条</li>
+			<li>pageX: 鼠标事件位置相对于浏览器(浏览器的有效区域)左上角x的坐标,包括滚动条</li>
+			<li>pageY: 鼠标事件位置相对于浏览器(浏览器的有效区域)左上角y的坐标,包括滚动条</li>
+			<li>screenX: 鼠标事件位置屏幕左上角x的坐标,包括滚动条</li>
+			<li>screenY: 鼠标事件位置屏幕左上角y的坐标,包括滚动条</li>
+		</ul>
+		
+		
+		
+		
+		<script>
+			let concept = document.getElementsByClassName('concept')
+			console.log(concept)
+			console.log(concept[0].clientLeft,concept[0].clientTop, concept[0].clientWidth)
+			concept[0].onclick = function(e) {
+				console.log(e.clientX,e.offsetX,e.pageX)
+			}
+		</script>
+	</body>
+</html>

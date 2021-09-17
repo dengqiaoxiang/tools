@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>scroll</title>
+		
+		<style>
+			.concept{
+				padding: 10px 12px;
+				border: 5px solid #ddd;
+			}
+		</style>
+	</head>
+	<body>
+		
+		<h3>scroll 包括内容、 padding、溢出尺寸、且为整数</h3>
+		<ul class="concept">
+			<li>scrollWidth: 包括内容宽度、左右padding、溢出尺寸，无溢出的情况，与clientWidth相同</li>
+			<li>scrollHeight: 包括元素高度、上下padding、溢出尺寸，无溢出的情况，与clientHeight相同</li>
+			<li>scrollLeft: 获取或者设置对象的最左边到对象在当前窗口显示的范围内的左边的距离，也就是元素被滚动条向左拉动的距离</li>
+			<li>scrollTop: 获取或者设置对象的最左边到对象在当前窗口显示的范围内的顶边的距离，也就是元素滚动条被向下拉动的距离</li>
+		</ul>
+		
+		
+		
+		
+		<script>
+			let concept = document.getElementsByClassName('concept')
+			console.log(concept)
+			console.log(concept[0].scrollLeft,concept[0].scrollTop, concept[0].scrollWidth)
+			concept[0].onclick = function(e) {
+				console.log(e.clientX)
+			}
+		</script>
+	</body>
+</html>

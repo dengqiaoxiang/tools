@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>柯理化</title>
+	</head>
+	<body>
+		<h1>柯理化: 将接受多个参数的函数转为接受单一参数的函数, 并且返回余下参数且返回结果</h1>
+		<script type="text/javascript">
+			// 好处
+			// 1、参数复用
+			
+			// Currying后
+			function curryingCheck(reg) {
+			    return function(txt) {
+			        return reg.test(txt)
+			    }
+			}
+			
+			var hasNumber = curryingCheck(/\d+/g)
+			var hasLetter = curryingCheck(/[a-z]+/g)
+			
+			hasNumber('test1')      // true
+			hasNumber('testtest')   // false
+			hasLetter('21212')      // false
+			
+			
+			// 2、提前确认
+			//换一种写法可能比较好理解一点，上面就是把isSupport这个参数给先确定下来了
+			var on = function(isSupport, element, event, handler) {
+			    isSupport = isSupport || document.addEventListener;
+			    if (isSupport) {
+			        return element.addEventListener(event, handler, false);
+			    } else {
+			        return element.attachEvent('on' + event, handler);
+			    }
+			}
+			
+			// 3、 延迟运行
+			Function.prototype.bind = function (context) {
+			    var _this = this
+			    var args = Array.prototype.slice.call(arguments, 1)
+			 
+			    return function() {
+			        return _this.apply(context, args)
+			    }
+			}
+			
+			// 粗暴简单版
+			function add(a){
+				return function(b){
+					return function(c){
+						return a + b + c
+					}
+				}
+			}
+			console.log(add(1)(2)(3))
+			
+			
+			
+			// 参数固定 通用版
+			const curry = (fn) =>
+			(judge = (...args) =>
+			    args.length === fn.length
+			    ? fn(...args)
+			    : (...arg) => judge(...args, ...arg));
+			const add1 = (a, b, c) => a * b * c;
+			const curryAdd = curry(add1);
+			console.log(curryAdd(1)(2)(3)); // 6
+			console.log(curryAdd(1,2)(3)); // 6
+			
+			
+			
+			// 在参数固定时, 通用版
+			// 参数相等时，执行函数，函数参数大于传入参数回调闭包
+			// 参数不确定，用闭包
+			let currying1 = function(func){
+				return function temp(...args) {
+					if(func.length == args.length) {
+						return func(...args)
+					}else{
+						return function (...arg) {
+						  return temp(...args, ...arg)
+						}
+					}
+				}
+			}
+			const curryAdd1 = currying1(add1);
+			console.log(curryAdd1(1)(2)(3)); // 6
+			
+			
+			// let currying2 = function(func) {
+			// 	return function temp(...args){
+			// 		if(func.length == args.length){
+			// 			return func(...args)
+			// 		}else{
+			// 			 return (...arg) => temp(...args,...arg)
+			// 		}
+			// 	}
+			// }
+			
+			
+			
+			
+			// 参数不固定 通用版
+			function add(func) {
+			    // 第一次执行时，定义一个数组专门用来存储所有的参数
+			    var _args = Array.prototype.slice.call(arguments);
+			
+			    // 在内部声明一个函数，利用闭包的特性保存_args并收集所有的参数值
+			    var _adder = function() {
+			        _args.push(...arguments);
+			        return _adder;
+			    };
+			
+			    // 利用toString隐式转换的特性，当最后执行时隐式转换，并计算最终的值返回
+			    _adder.toString = function () {
+			        return _args.reduce(function (a, b) {
+			            return a + b;
+			        });
+			    }
+			    return _adder;
+			}
+			
+			console.log(add(1)(2)(3))              // 6
+			console.log(Number(add(1, 2, 3)(4)))          // 10
+			add(1)(2)(3)(4)(5)          // 15
+			
+			function add2 (...args) {
+			    //求和
+			    return args.reduce((a, b) => a + b)
+			}
+			
+			function currying (fn) {
+			    let args = []
+			    return function temp (...newArgs) {
+			        if (newArgs.length) {
+			            args = [
+			                ...args,
+			                ...newArgs
+			            ]
+			            return temp
+			        } else {
+			            let val = fn.apply(this, args)
+			            args = [] //保证再次调用时清空
+			            return val
+			        }
+			    }
+			}
+			
+			let addCurry = currying(add2)
+			console.log(addCurry(1,2)(3)())  //15
+			
+			
+			
+			
+		</script>
+	</body>
+</html>

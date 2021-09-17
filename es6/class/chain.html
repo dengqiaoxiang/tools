@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script>
+			class PersonGenerator {
+				taskQueue = []
+				constructor(name){
+					this.taskQueue.push(()=>this.sayHi(name))
+					this.runTaskQueue()
+				}
+				
+				nextTask() {
+					if(this.taskQueue.length == 0) return
+					let task = this.taskQueue.shift()
+					if(typeof task == 'function') {
+						task()
+						this.nextTask()
+					}else if(typeof task == 'number') {
+						console.log( task + ' seconds' )
+						setTimeout(() => this.nextTask(), task * 1000)
+					}
+				}
+				
+				runTaskQueue() {
+					setTimeout(() => this.nextTask())
+				}
+				
+				sayHi(name) {
+					console.log(name)
+					return this
+				}
+				
+				sleep(seconds) {
+					this.taskQueue.push(seconds)
+					return this
+				}
+				
+				sleepFirst(seconds) {
+					this.taskQueue.unshift(seconds)
+					return this
+				}
+				
+				eat(name) {
+					this.taskQueue.push(()=>console.log(name))
+					return this
+				}
+			}
+			
+			
+			let Person = name => new PersonGenerator(name)
+			Person('hi').sleep(2).sleepFirst(1).eat('name')
+		</script>
+	</body>
+</html>
